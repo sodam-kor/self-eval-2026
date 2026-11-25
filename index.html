@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>학교자체평가 온라인 사전 협의</title>
+<style>
+  :root {
+    --navy: #1e3a6e; --navy-dark: #152b52; --blue: #2563eb; --blue-soft: #eaf1ff;
+    --green: #047857; --green-soft: #e3f6ee; --orange: #b45309; --orange-soft: #fff4e0;
+    --bg: #f3f5f9; --card: #ffffff; --text: #1a2233; --muted: #5f6b7d; --line: #e2e7ef;
+    --error: #b91c1c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Pretendard", -apple-system, "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    font-size: 16px; line-height: 1.65; word-break: keep-all; padding-bottom: 52px; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 16px; }
+
+  /* 상단 배너 */
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%); color: #fff; padding: 28px 0 30px; }
+  .hero .school { font-size: 14px; opacity: .85; }
+  .hero h1 { font-size: 25px; line-height: 1.35; margin: 6px 0 14px; font-weight: 800; }
+  .hero h1 .online { background: #fff; color: var(--navy); padding: 0 8px; border-radius: 6px; }
+  .hero .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .hero .tag { font-size: 14px; font-weight: 600; padding: 5px 12px; border-radius: 999px;
+    background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.28); }
+  .hero .tag.deadline { background: #fde68a; color: #78350f; border-color: #fde68a; }
+
+  /* 카드 */
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin: 16px 0; }
+  .card-title { font-size: 17px; font-weight: 800; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  .card-title .ico { width: 26px; height: 26px; border-radius: 8px; background: var(--blue-soft); color: var(--blue);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 14px; }
+
+  /* 협의 소개 */
+  .lead { font-size: 16px; margin: 0 0 14px; }
+  .ig-label { font-size: 13px; font-weight: 800; color: var(--muted); letter-spacing: .04em; margin: 18px 0 10px; }
+
+  /* 인포그래픽 타임라인 (가로) */
+  .timeline { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); position: relative; }
+  .timeline::before { content: ""; position: absolute; top: 27px; left: 12.5%; right: 12.5%; height: 3px;
+    background: repeating-linear-gradient(90deg, #b9c6db 0 8px, transparent 8px 14px); }
+  .timeline li { position: relative; text-align: center; padding: 0 4px; }
+  .dot { width: 56px; height: 56px; margin: 0 auto 10px; border-radius: 50%; background: #fff; border: 3px solid #c3cfe2;
+    display: flex; align-items: center; justify-content: center; position: relative; z-index: 1; }
+  .dot svg { width: 26px; height: 26px; fill: none; stroke: #5f6b7d; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .tl-who { font-size: 12px; font-weight: 700; color: var(--muted); line-height: 1.4; min-height: 2.8em; display: flex; align-items: flex-start; justify-content: center; }
+  .tl-what { font-size: 15px; line-height: 1.45; }
+  .tl-what b { color: var(--navy); }
+  .timeline li.now .dot { background: var(--blue); border-color: var(--blue); box-shadow: 0 0 0 6px var(--blue-soft); }
+  .timeline li.now .dot svg { stroke: #fff; }
+  .timeline li.now .tl-what b { color: var(--blue); }
+  .here { background: var(--blue); color: #fff; padding: 1px 9px; border-radius: 999px; font-size: 12px; }
+
+  /* 이번에 정할 것 */
+  .decide { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .dc { display: flex; align-items: center; gap: 12px; border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .dc-num { flex: 0 0 auto; width: 38px; height: 38px; border-radius: 10px; background: var(--navy); color: #fff;
+    font-weight: 800; font-size: 17px; display: flex; align-items: center; justify-content: center; }
+  .dc b { display: block; font-size: 16px; }
+  .dc small { display: block; font-size: 13px; color: var(--muted); }
+
+  /* 협의회 통합 도식 */
+  .merge { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: stretch; margin-top: 14px; }
+  .src { border-radius: 12px; padding: 12px 10px; text-align: center; border: 1.5px solid; }
+  .src.self { background: var(--blue-soft); border-color: #b5cbf5; }
+  .src.grow { background: var(--green-soft); border-color: #a9dcc5; }
+  .src-tag { display: inline-block; font-size: 12px; font-weight: 800; color: #fff; padding: 2px 10px; border-radius: 999px; margin-bottom: 6px; }
+  .src.self .src-tag { background: var(--blue); }
+  .src.grow .src-tag { background: var(--green); }
+  .src-name { font-size: 15px; font-weight: 700; line-height: 1.4; }
+  .plus { align-self: center; width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 2px solid #c3cfe2;
+    color: var(--muted); font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .merge-arrow { grid-column: 1 / -1; text-align: center; position: relative; height: 30px; }
+  .merge-arrow::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 6px; border-left: 3px dashed #b9c6db; }
+  .merge-arrow::after { content: ""; position: absolute; left: calc(50% - 6px); bottom: 0; border: 7px solid transparent;
+    border-top-color: #b9c6db; border-bottom: 0; transform: translateX(1px); }
+  .merge-arrow span { position: absolute; left: calc(50% + 12px); top: 4px; font-size: 12px; font-weight: 800; color: var(--muted); }
+  .result { grid-column: 1 / -1; text-align: center; background: var(--navy); color: #fff; border-radius: 12px;
+    padding: 12px; font-size: 16px; }
+  .result b { color: #fde68a; }
+  .merge-note { grid-column: 1 / -1; text-align: center; font-size: 13px; color: var(--muted); }
+
+  /* 휴대폰: 세로 타임라인 */
+  @media (max-width: 560px) {
+    .timeline { grid-template-columns: 1fr; gap: 14px; }
+    .timeline::before { top: 28px; bottom: 28px; left: 26px; right: auto; width: 3px; height: auto;
+      background: repeating-linear-gradient(180deg, #b9c6db 0 8px, transparent 8px 14px); }
+    .timeline li { display: flex; align-items: center; gap: 14px; text-align: left; padding: 0; }
+    .dot { margin: 0; flex: 0 0 auto; }
+    .tl-who { min-height: 0; justify-content: flex-start; }
+    .tl-what br { display: none; }
+    .decide { grid-template-columns: 1fr; }
+  }
+
+  /* 진행 방법 3단계 */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .steps li { background: var(--bg); border-radius: 10px; padding: 12px; text-align: center; font-size: 14px; font-weight: 600; }
+  .steps b { display: block; width: 28px; height: 28px; line-height: 28px; margin: 0 auto 6px; border-radius: 50%;
+    background: var(--navy); color: #fff; font-size: 14px; }
+
+  /* 선정 근거 흐름 */
+  .flow { display: flex; flex-direction: column; gap: 0; }
+  .flow .node { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: #fff; }
+  .flow .node small { display: block; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+  .flow .node strong { display: block; font-size: 15px; }
+  .flow .node span { display: block; font-size: 14px; color: var(--muted); }
+  .flow .node.here { border: 2px solid var(--blue); background: var(--blue-soft); }
+  .flow .node.here small { color: var(--blue); }
+  .flow .arrow { text-align: center; color: #9aa6b8; font-size: 18px; line-height: 1.2; padding: 2px 0; }
+  .callout { margin-top: 12px; background: var(--green-soft); color: var(--green); border-radius: 10px;
+    padding: 10px 14px; font-size: 14px; font-weight: 600; }
+
+  /* 입력 */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  label.field { display: block; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+  input[type=text], select, textarea { width: 100%; font: inherit; font-size: 16px; padding: 11px 12px;
+    border: 1px solid #c9d2df; border-radius: 10px; background: #fff; color: var(--text); }
+  input[type=text]:focus, select:focus, textarea:focus { outline: 2px solid var(--blue); outline-offset: 1px; border-color: var(--blue); }
+  textarea { min-height: 84px; resize: vertical; }
+
+  /* 섹션 제목 */
+  .section { margin: 34px 0 6px; display: flex; align-items: baseline; gap: 10px; }
+  .section .num { font-size: 15px; font-weight: 800; color: #fff; background: var(--navy); border-radius: 8px; padding: 2px 10px; }
+  .section h2 { font-size: 20px; margin: 0; font-weight: 800; }
+  .section-desc { color: var(--muted); font-size: 15px; margin: 0 0 4px; }
+
+  /* 항목 행 */
+  .item { background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 10px 0; padding: 16px;
+    transition: border-color .15s, box-shadow .15s; }
+  .item.answered { border-color: #9fbaf0; }
+  .item-head { display: flex; gap: 12px; align-items: flex-start; }
+  .badge-no { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 10px; background: var(--blue-soft); color: var(--blue);
+    font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .item-text { flex: 1; }
+  .item-text .t { font-weight: 700; font-size: 16px; line-height: 1.5; }
+  .item-text ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted); font-size: 14px; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .seg button { font: inherit; font-size: 15px; font-weight: 700; padding: 11px 8px; border-radius: 10px; cursor: pointer;
+    border: 1.5px solid #c9d2df; background: #fff; color: var(--muted); }
+  .seg button.agree.on { background: var(--green); border-color: var(--green); color: #fff; }
+  .seg button.revise.on { background: var(--orange); border-color: var(--orange); color: #fff; }
+  .comment { display: none; margin-top: 10px; }
+  .comment.show { display: block; }
+  .comment textarea { border-color: #f0c27a; background: var(--orange-soft); }
+
+  /* 하단 고정 바 */
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,.97); border-top: 1px solid var(--line);
+    box-shadow: 0 -4px 16px rgba(20,40,80,.08); z-index: 10; }
+  .bar .wrap { display: flex; align-items: center; gap: 12px; padding-top: 4px; padding-bottom: 4px; }
+  .progress { flex: 1; }
+  .progress .label { display: none; }
+  .segs .cnt { flex: 0 0 auto; font-size: 12px; font-weight: 700; color: var(--muted); margin-left: 6px; }
+  .progress .label b.ok { color: var(--green); }
+  .progress .label b.no { color: var(--orange); }
+  .segs { display: flex; align-items: center; gap: 3px; margin-top: 0; }
+  .segs .start { flex: 0 0 auto; font-size: 11px; font-weight: 800; line-height: 1; padding: 3px 8px; border-radius: 999px;
+    border: 1.5px solid #c9d2df; color: var(--muted); background: #fff; margin-right: 5px; transition: all .2s; }
+  .segs .start.on { background: var(--green); border-color: var(--green); color: #fff; }
+  .segs .item { flex: 1; height: 4px; border-radius: 999px; background: #e6ebf3; transition: background .2s; }
+  .segs .item.on { background: var(--blue); }
+
+  /* 응답자 정보 = 시작 칸 */
+  .start-card { border: 2px solid var(--navy); }
+  .start-badge { font-size: 12px; font-weight: 800; letter-spacing: .06em; color: #fff; background: var(--navy);
+    padding: 3px 10px; border-radius: 999px; }
+  .submit { font: inherit; font-size: 14px; font-weight: 800; padding: 6px 16px; border: 0; border-radius: 8px;
+    background: var(--navy); color: #fff; cursor: pointer; white-space: nowrap; }
+  .submit:disabled { opacity: .6; cursor: default; }
+  .error { color: var(--error); font-weight: 700; margin: 12px 0; min-height: 1em; }
+  .note { font-size: 13px; color: var(--muted); text-align: center; }
+
+  .done { text-align: center; padding: 48px 20px; }
+  .done .check { width: 64px; height: 64px; border-radius: 50%; background: var(--green-soft); color: var(--green);
+    font-size: 32px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+  .done h2 { font-size: 21px; margin: 0 0 6px; }
+
+  @media (max-width: 520px) {
+    .hero h1 { font-size: 22px; }
+    .grid2 { grid-template-columns: 1fr; }
+    .steps li { font-size: 13px; padding: 10px 6px; }
+    .submit { padding: 6px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="school" id="school"></div>
+    <h1>2026학년도 학교자체평가<br>
+      <span class="online">온라인</span> 사전 협의</h1>
+    <div class="tags">
+      <span class="tag">💻 온라인 서면 협의</span>
+      <span class="tag deadline" id="deadline"></span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap" id="form-area">
+
+  <div class="card">
+    <div class="card-title"><span class="ico">i</span>이번 온라인 사전 협의는</div>
+    <p class="lead">2026학년도 <b>학교자체평가</b>를 시작하기 전에, 학교자체평가위원회 위원님들의 의견을 모아
+      <b>자율지표</b>와 <b>평가협의회 운영 방식</b>을 정하는 협의입니다.</p>
+    <div class="ig-label">자율지표가 정해지는 과정</div>
+    <ol class="timeline">
+      <li>
+        <div class="dot"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M8 7h7M8 11h7"/></svg></div>
+        <div class="tl-body">
+          <div class="tl-who">교육청 기본계획</div>
+          <div class="tl-what">자율지표는<br><b>학교가 직접</b> 구성</div>
+        </div>
+      </li>
+      <li>
+        <div class="dot"><svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V10l7-5 7 5v11"/><path d="M10 21v-5h4v5"/></svg></div>
+        <div class="tl-body">
+          <div class="tl-who">본교 자체평가 추진 계획</div>
+          <div class="tl-what">검토 영역<br><b>5개</b> 설정</div>
+        </div>
+      </li>
+      <li class="now">
+        <div class="dot"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9 12h.01M13 12h.01M17 12h.01"/></svg></div>
+        <div class="tl-body">
+          <div class="tl-who"><span class="here">지금 여기</span></div>
+          <div class="tl-what">위원 의견으로<br><b>최종 확정</b></div>
+        </div>
+      </li>
+      <li>
+        <div class="dot"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
+        <div class="tl-body">
+          <div class="tl-who">이후</div>
+          <div class="tl-what">설문 실시 →<br><b>다음 해 계획</b> 반영</div>
+        </div>
+      </li>
+    </ol>
+
+    <div class="ig-label">이번에 정할 것</div>
+    <div class="decide">
+      <div class="dc"><span class="dc-num">Ⅰ</span><div><b>자율지표 5개 확정</b><small>지표마다 동의 / 수정 의견</small></div></div>
+      <div class="dc"><span class="dc-num">Ⅱ</span><div><b>평가협의회 통합 운영</b><small>자체평가 + 성장평가 협의회 합치기</small></div></div>
+    </div>
+  </div>
+
+  <div class="card start-card">
+    <div class="card-title"><span class="start-badge">START</span>응답자 정보부터 입력해 주세요</div>
+    <div class="grid2">
+      <div>
+        <label class="field" for="name">성명</label>
+        <input type="text" id="name" maxlength="50" autocomplete="name" placeholder="예: 홍길동">
+      </div>
+      <div>
+        <label class="field" for="role">구분</label>
+        <select id="role">
+          <option value="">선택해 주세요</option>
+          <option>교직원 위원</option>
+          <option>학부모 위원</option>
+          <option>학생 위원</option>
+          <option>외부 위원</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div id="agenda"></div>
+
+  <div class="section"><span class="num">기타</span><h2>추가 의견</h2></div>
+  <div class="card">
+    <label class="field" for="etc">추가하고 싶은 자율지표나 기타 의견 (선택)</label>
+    <textarea id="etc" maxlength="2000" placeholder="자유롭게 적어 주세요."></textarea>
+  </div>
+
+  <div class="error" id="error"></div>
+  <p class="note">다시 제출하면 마지막 제출 내용으로 집계됩니다.</p>
+</div>
+
+<div class="wrap" id="done-area" style="display:none">
+  <div class="card done">
+    <div class="check">✓</div>
+    <h2>제출되었습니다. 감사합니다!</h2>
+    <p>협의 결과는 정리 후 공유드리겠습니다.</p>
+  </div>
+</div>
+
+<div class="bar" id="bar">
+  <div class="wrap">
+    <div class="progress">
+      <div class="label" id="progress-label"></div>
+      <div class="segs" id="segs"></div>
+    </div>
+    <button class="submit" id="submit">제출하기</button>
+  </div>
+</div>
+
+<script>
+/* ===================== 내용 설정 (여기만 고치면 됩니다) ===================== */
+var CONFIG = {
+  school: '청학중학교 학교자체평가위원회',
+  deadline: '⏰ 제출 기간 11. 26.(목) ~ 11. 27.(금)',
+  // GitHub Pages 등 외부에서 열 때 응답을 보낼 Apps Script 웹앱 주소
+  apiUrl: 'https://script.google.com/macros/s/AKfycbycubLs2eUaMWpt7fxySuqrz3YS1D8syHgk1ymZ4S7mlKOFRgoBnK57HZ9bqcYG3cyM/exec'
+};
+
+/* section: 이 항목 앞에 표시할 큰 제목 / id는 Code.gs의 AGENDA와 같아야 합니다 */
+var AGENDA = [
+  { id: 'a1', no: '1', section: ['Ⅰ', '자율지표 확정'],
+    sectionDesc: '본교 학교자체평가 추진 계획에 따라 선정한 자율지표 5개입니다. 지표마다 선택해 주세요.',
+    title: '결대로자람학교 운영과 연계한 학생 성장 중심 교육활동 운영' },
+  { id: 'a2', no: '2', title: '학생 참여 중심 체험·진로교육 운영' },
+  { id: 'a3', no: '3', title: '교육공동체 소통 및 협력 활성화' },
+  { id: 'a4', no: '4', title: '안전하고 쾌적한 교육환경 조성' },
+  { id: 'a5', no: '5', title: '학생 맞춤형 지원 및 다양성 존중 교육 강화' },
+  { id: 'a6', no: '1', section: ['Ⅱ', '평가협의회 통합 운영'],
+    sectionDesc: '두 평가에서 따로 하던 협의회를 한 번에 진행합니다.',
+    title: '교육공동체 협의회 통합',
+    merge: { left: '교육공동체<br>평가협의회', right: '교육공동체<br>성찰협의회',
+             result: '교육공동체 협의회 <b>1회</b>로 진행',
+             note: '교직원 · 학부모 · 학생별로 실시 / 결과는 두 보고서에 모두 활용' } },
+  { id: 'a7', no: '2',
+    title: '위원회 평가협의회 통합',
+    merge: { left: '학교자체평가위원회<br>평가협의회', right: '성장평가위원회<br>평가협의회',
+             result: '두 위원회 <b>합동 협의회</b>로 진행',
+             note: '설문 결과·추진 실적 함께 검토 / 결과보고서는 위원회별로 작성' } }
+];
+/* ========================================================================== */
+
+var answers = {};
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function render() {
+  document.getElementById('school').textContent = CONFIG.school;
+  document.getElementById('deadline').textContent = CONFIG.deadline;
+
+  var html = '';
+  AGENDA.forEach(function (a) {
+    if (a.section) {
+      html += '<div class="section"><span class="num">' + esc(a.section[0]) + '</span><h2>' + esc(a.section[1]) + '</h2></div>';
+      if (a.sectionDesc) html += '<p class="section-desc">' + esc(a.sectionDesc) + '</p>';
+    }
+    // points는 설정에서 직접 쓴 <b> 강조만 쓰므로 그대로 넣습니다.
+    var pts = a.points ? '<ul>' + a.points.map(function (p) { return '<li>' + p + '</li>'; }).join('') + '</ul>' : '';
+    if (a.merge) {
+      var m = a.merge;
+      pts += '<div class="merge">' +
+        '<div class="src self"><span class="src-tag">학교자체평가</span><div class="src-name">' + m.left + '</div></div>' +
+        '<div class="plus">+</div>' +
+        '<div class="src grow"><span class="src-tag">결대로자람 성장평가</span><div class="src-name">' + m.right + '</div></div>' +
+        '<div class="merge-arrow"><span>하나로</span></div>' +
+        '<div class="result">' + m.result + '</div>' +
+        '<div class="merge-note">' + m.note + '</div>' +
+        '</div>';
+    }
+    html += '<div class="item" id="item-' + a.id + '">' +
+      '<div class="item-head"><div class="badge-no">' + esc(a.no) + '</div>' +
+      '<div class="item-text"><div class="t">' + esc(a.title) + '</div>' + pts + '</div></div>' +
+      '<div class="seg">' +
+      '<button type="button" class="agree" data-id="' + a.id + '" data-v="agree">동의</button>' +
+      '<button type="button" class="revise" data-id="' + a.id + '" data-v="revise">수정 의견 있음</button>' +
+      '</div>' +
+      '<div class="comment" id="c-' + a.id + '"><textarea maxlength="2000" placeholder="수정 의견을 적어 주세요."></textarea></div>' +
+      '</div>';
+  });
+  document.getElementById('agenda').innerHTML = html;
+
+  document.querySelectorAll('.seg button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var id = b.getAttribute('data-id'), v = b.getAttribute('data-v');
+      answers[id] = v;
+      document.querySelectorAll('.seg button[data-id="' + id + '"]').forEach(function (x) {
+        x.classList.toggle('on', x === b);
+      });
+      document.getElementById('item-' + id).classList.add('answered');
+      document.getElementById('c-' + id).classList.toggle('show', v === 'revise');
+      if (v === 'revise') document.querySelector('#c-' + id + ' textarea').focus();
+      updateProgress();
+    });
+  });
+  document.getElementById('name').addEventListener('input', updateProgress);
+  document.getElementById('role').addEventListener('change', updateProgress);
+  updateProgress();
+}
+
+function updateProgress() {
+  var done = AGENDA.filter(function (a) { return answers[a.id]; }).length;
+  var infoOk = !!(document.getElementById('name').value.trim() && document.getElementById('role').value);
+  document.getElementById('progress-label').innerHTML =
+    '응답자 정보 ' + (infoOk ? '<b class="ok">✓ 입력 완료</b>' : '<b class="no">미입력</b>') +
+    ' · 항목 ' + done + ' / ' + AGENDA.length;
+  var segs = '<span class="start' + (infoOk ? ' on' : '') + '">' + (infoOk ? '✓ 응답자 정보 입력 완료' : '▶ 시작: 응답자 정보 입력') + '</span>';
+  AGENDA.forEach(function (a) { segs += '<span class="item' + (answers[a.id] ? ' on' : '') + '"></span>'; });
+  segs += '<span class="cnt">' + done + '/' + AGENDA.length + '</span>';
+  document.getElementById('segs').innerHTML = segs;
+}
+
+function collect() {
+  var data = {
+    name: document.getElementById('name').value.trim(),
+    role: document.getElementById('role').value,
+    etc: document.getElementById('etc').value.trim(),
+    answers: {}
+  };
+  AGENDA.forEach(function (a) {
+    data.answers[a.id] = {
+      choice: answers[a.id] || '',
+      comment: document.querySelector('#c-' + a.id + ' textarea').value.trim()
+    };
+  });
+  return data;
+}
+
+function validate(d) {
+  if (!d.name) return { msg: '성명을 입력해 주세요.', el: document.getElementById('name') };
+  if (!d.role) return { msg: '구분을 선택해 주세요.', el: document.getElementById('role') };
+  for (var i = 0; i < AGENDA.length; i++) {
+    var a = AGENDA[i], ans = d.answers[a.id];
+    if (!ans.choice) return { msg: '「' + a.title + '」에 동의 여부를 선택해 주세요.', el: document.getElementById('item-' + a.id) };
+    if (ans.choice === 'revise' && !ans.comment) return { msg: '「' + a.title + '」의 수정 의견을 적어 주세요.', el: document.getElementById('c-' + a.id) };
+  }
+  return null;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  render();
+  var btn = document.getElementById('submit');
+  var err = document.getElementById('error');
+  btn.addEventListener('click', function () {
+    var d = collect();
+    var v = validate(d);
+    err.textContent = v ? v.msg : '';
+    if (v) {
+      v.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      alert(v.msg);
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = '제출 중...';
+    var finish = function () {
+      document.getElementById('form-area').style.display = 'none';
+      document.getElementById('bar').style.display = 'none';
+      document.getElementById('done-area').style.display = 'block';
+      window.scrollTo(0, 0);
+    };
+    var fail = function (msg) {
+      err.textContent = '제출에 실패했습니다: ' + msg + ' (잠시 후 다시 눌러 주세요)';
+      btn.disabled = false; btn.textContent = '제출하기';
+    };
+    if (typeof google === 'undefined' || !google.script) {
+      // GitHub Pages에서 열었을 때: Apps Script로 직접 전송
+      if (location.protocol === 'file:') {
+        alert('미리보기 모드입니다. 실제 제출은 배포된 주소에서만 됩니다.');
+        btn.disabled = false; btn.textContent = '제출하기';
+        return;
+      }
+      fetch(CONFIG.apiUrl, { method: 'POST', body: JSON.stringify(d) })
+        .then(function (r) { return r.json(); })
+        .then(function (res) { if (res && res.ok) finish(); else fail((res && res.error) || '알 수 없는 오류'); })
+        .catch(function (e) { fail(e && e.message ? e.message : '네트워크 오류'); });
+      return;
+    }
+    google.script.run
+      .withSuccessHandler(finish)
+      .withFailureHandler(function (e) {
+        err.textContent = '제출에 실패했습니다: ' + (e && e.message ? e.message : e);
+        btn.disabled = false; btn.textContent = '제출하기';
+      })
+      .submitResponse(d);
+  });
+});
+</script>
+</body>
+</html>
