@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>교직원 통합 설문지(안)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root {
+    --navy: #1e3a6e; --self: #2563eb; --self-soft: #eaf1ff; --self-line: #b5cbf5;
+    --grow: #047857; --grow-soft: #e3f6ee; --grow-line: #a9dcc5;
+    --star: #b91c1c; --star-soft: #fde8e8; --warn: #b45309; --warn-soft: #fff4e0;
+    --ac: #1f4db3; --ac-soft: #ebf0fb; --ac-line: #c3d2f2;
+    --ink: #191f28; --sub: #6b7684; --faint: #8b95a1; --bd: #e5e8eb;
+    --bg: #f7f8fa; --card: #ffffff; --fs: 1;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); word-break: keep-all; -webkit-font-smoothing: antialiased;
+    font-family: "Pretendard", -apple-system, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; font-size: 16px; line-height: 1.6; letter-spacing: -0.01em; }
+  button { font-family: inherit; }
+
+  /* ===== 검토용 탭 (배포 때 제거) ===== */
+  .viewtabs { background: #111827; position: sticky; top: 0; z-index: 30; }
+  .viewtabs .in { max-width: 1040px; margin: 0 auto; padding: 3px 16px; display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+  .viewtabs .ttl { font-size: 11px; font-weight: 700; color: #9ca3af; margin-right: 2px; }
+  .viewtabs button { font-size: 12px; font-weight: 600; border: 0; background: transparent; color: #d1d5db; border-radius: 999px; padding: 2px 10px; cursor: pointer; }
+  .viewtabs button.on { background: #fff; color: #111827; }
+  .viewtabs select { font: inherit; font-size: 12px; border: 0; border-radius: 999px; padding: 2px 8px; margin-left: auto; background: #374151; color: #fff; }
+  .view { display: none; } .view.on { display: block; }
+
+  /* ===== 응답자 화면 ===== */
+  #v-form { min-height: 100vh; padding-bottom: 110px; }
+  #v-form.ac-indigo { --ac: #3b5bdb; --ac-soft: #eef2ff; --ac-line: #c7d2fe; }
+  #v-form.ac-violet { --ac: #7048e8; --ac-soft: #f3f0ff; --ac-line: #d0bfff; }
+  #v-form.ac-emerald { --ac: #0ca678; --ac-soft: #e6fcf5; --ac-line: #96f2d7; }
+  #v-form.ac-coral { --ac: #f04452; --ac-soft: #fff0f1; --ac-line: #ffc9ce; }
+  #v-form.ac-black { --ac: #191f28; --ac-soft: #f2f4f6; --ac-line: #d1d6db; }
+  .fwrap { max-width: 680px; margin: 0 auto; padding: 0 18px; }
+
+  /* 고정 머리 */
+  .hdr { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.96); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--bd); box-shadow: 0 6px 16px rgba(17,24,39,.05); display: none; }
+  .hdr .in { max-width: 680px; margin: 0 auto; padding: 8px 18px 7px; }
+  .hdr .top { display: flex; align-items: center; gap: 10px; }
+  .hdr .no { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 8px; background: var(--ac); color: #fff; font-size: 13px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; }
+  .hdr .tt { flex: 1; min-width: 0; line-height: 1.25; }
+  .hdr .t1 { font-size: calc(15px * var(--fs)); font-weight: 800; }
+  .hdr .t2 { font-size: calc(12px * var(--fs)); color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hdr .cnt { font-size: 12.5px; font-weight: 700; color: var(--sub); white-space: nowrap; }
+  .hdr .cnt b { color: var(--ac); }
+  .segs { display: flex; gap: 4px; margin-top: 7px; }
+  .segs span { flex: 1; height: 4px; border-radius: 999px; background: #edf0f3; overflow: hidden; }
+  .segs span i { display: block; height: 100%; width: 0; background: var(--ac); border-radius: 999px; transition: width .25s; }
+
+  /* 시작 화면 (표지) */
+  .intro { margin-top: 12px; background: var(--card); border-radius: 24px; position: relative; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,.03), 0 10px 30px rgba(17,24,39,.05); }
+  .cover { position: relative; padding: 16px 22px 14px; color: #fff; overflow: hidden;
+    background: linear-gradient(135deg, var(--ac) 0%, color-mix(in srgb, var(--ac) 70%, #0b1533) 100%); }
+  .cover::before { content: ""; position: absolute; right: -70px; top: -80px; width: 240px; height: 240px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,.22), rgba(255,255,255,0) 70%); }
+  .cover::after { content: ""; position: absolute; left: -40px; bottom: -90px; width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,.12), rgba(255,255,255,0) 70%); }
+  .brand { display: flex; align-items: center; gap: 10px; position: relative; }
+  .brand img { width: 34px; height: 34px; border-radius: 50%; background: #fff; padding: 2px; object-fit: contain; }
+  .brand .s1 { font-size: 15px; font-weight: 800; line-height: 1.2; }
+  .brand .s2 { font-size: 11.5px; opacity: .8; }
+  .cover h1 { font-size: calc(22px * var(--fs)); line-height: 1.3; margin: 10px 0 3px; font-weight: 800; letter-spacing: -0.02em; position: relative; }
+  .cover p { margin: 0; font-size: calc(13.5px * var(--fs)); opacity: .88; position: relative; }
+  .ibody { padding: 12px 22px 14px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pills .due { background: var(--ac-soft); color: var(--ac); font-weight: 800; }
+  .pills .due.late { background: #fff4e0; color: #b45309; }
+  .pills span { background: var(--bg); border-radius: 999px; padding: 3px 11px; font-size: 12.5px; font-weight: 600; color: #4e5968; }
+  .road { margin-top: 2px; position: relative; display: grid; grid-template-columns: repeat(5, 1fr); }
+  .road::before { content: ""; position: absolute; top: 16px; left: 10%; right: 10%; border-top: 2px dashed var(--ac-line); }
+  .road div { text-align: center; position: relative; }
+  .road .i { width: 32px; height: 32px; margin: 0 auto 2px; border-radius: 10px; background: var(--ac-soft); font-size: 16px;
+    display: flex; align-items: center; justify-content: center; }
+  .road .n { font-size: 11.5px; font-weight: 700; color: #4e5968; line-height: 1.3; }
+  .road .c { font-size: 10.5px; color: var(--faint); }
+  .field { margin-top: 12px; }
+  .field label { display: block; font-size: 13px; font-weight: 700; color: var(--sub); margin-bottom: 6px; }
+  .field input { width: 100%; font: inherit; font-size: calc(16px * var(--fs)); padding: 11px 14px; border: 0; border-radius: 12px; background: var(--bg);
+    outline: 2px solid transparent; transition: outline-color .15s; }
+  .field input:focus { outline-color: var(--ac); background: #fff; }
+  .lock { margin-top: 8px; font-size: 12.5px; color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fsbox { position: absolute; top: 12px; right: 14px; text-align: center; z-index: 2; }
+  .fsbox .lb { font-size: 10.5px; font-weight: 700; color: rgba(255,255,255,.8); margin-bottom: 3px; }
+  .fsctl { display: inline-flex; background: rgba(255,255,255,.18); border-radius: 8px; padding: 2px; }
+  .fsctl button { border: 0; background: transparent; cursor: pointer; padding: 0 8px; line-height: 24px; color: #fff; font-weight: 800; border-radius: 6px; }
+  .fsctl .s { font-size: 11px; } .fsctl .m { font-size: 13px; } .fsctl .l { font-size: 15px; }
+  .fsctl button.on { background: #fff; color: var(--ac); }
+  .review { margin-top: 8px; font-size: 12px; color: var(--faint); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+  .resume { display: none; margin-top: 16px; background: var(--ac-soft); border-radius: 14px; padding: 12px 14px; font-size: 14px; }
+  .resume b { color: var(--ac); }
+  .resume button { border: 0; border-radius: 10px; padding: 7px 12px; font-weight: 700; font-size: 13px; cursor: pointer; margin: 8px 6px 0 0; }
+  .resume .go { background: var(--ac); color: #fff; } .resume .new { background: #fff; color: #4e5968; }
+
+  /* 시작 화면 재배치 */
+  .chiprow { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; position: relative; }
+  .due { display: inline-block; position: relative; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.28);
+    border-radius: 999px; padding: 3px 12px; font-size: 12.5px; }
+  .due b { margin-left: 4px; }
+  .due.late { background: #fff4e0; color: #b45309; border-color: #fff4e0; }
+  .rl { font-size: 13px; font-weight: 700; color: var(--sub); margin-bottom: 6px; }
+  .role { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .role button { border: 2px solid var(--bd); background: #fff; border-radius: 14px; padding: 9px 12px; cursor: pointer; text-align: left;
+    display: flex; flex-direction: column; gap: 1px; transition: border-color .15s, background .15s; }
+  .role button span { font-size: 15px; font-weight: 800; color: var(--ink); }
+  .role button small { font-size: 12px; color: var(--sub); }
+  .role button.on { border-color: var(--ac); background: var(--ac-soft); }
+  .kbdhint { margin-top: 4px; font-size: 12px; color: var(--faint); }
+
+  /* 용어 도움말 */
+  .term { border-bottom: 1.5px dotted var(--ac); cursor: help; }
+  .term sup { font-size: .65em; color: var(--ac); margin-left: 1px; font-weight: 800; }
+  .tip { position: fixed; z-index: 50; background: #191f28; color: #fff; font-size: 13px; line-height: 1.5; padding: 10px 12px; border-radius: 10px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.18); opacity: 0; pointer-events: none; transition: opacity .15s; }
+  .tip.show { opacity: 1; pointer-events: auto; }
+  .tip b { display: block; font-size: 13.5px; margin-bottom: 2px; color: #a5c4ff; }
+
+  /* 제출 전 확인 */
+  .rv { background: var(--card); border-radius: 16px; padding: 10px 12px; margin: 10px 0; }
+  .rvh { font-weight: 800; font-size: 14px; padding: 2px 4px 6px; }
+  .rvi { display: flex; align-items: center; gap: 8px; width: 100%; border: 0; background: transparent; padding: 7px 6px; border-radius: 10px; cursor: pointer; text-align: left; }
+  .rvi:hover { background: var(--bg); }
+  .rvn { color: var(--ac); font-weight: 800; flex: 0 0 auto; }
+  .rvt { flex: 1; min-width: 0; font-size: 13.5px; color: #4e5968; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rvv { flex: 0 0 auto; font-size: 12.5px; font-weight: 800; color: var(--ac); background: var(--ac-soft); border-radius: 999px; padding: 2px 10px; max-width: 45%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rvv.m { font-weight: 600; } .rvv.no { color: #b45309; background: #fff4e0; }
+  .q.flash { outline-color: var(--ac); }
+  .q.kbd { outline: 2px dashed var(--ac-line); }
+
+  /* 단계 제목 */
+  .stage-title { margin: 26px 2px 10px; display: flex; gap: 12px; align-items: center; }
+  .stage-title .ic { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 14px; background: var(--card); font-size: 24px;
+    display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 6px 14px rgba(17,24,39,.05); }
+  .stage-title .k { font-size: 12.5px; font-weight: 800; color: var(--ac); letter-spacing: .02em; }
+  .stage-title h2 { margin: 2px 0 0; font-size: calc(21px * var(--fs)); font-weight: 800; letter-spacing: -0.02em; }
+  .stage-title p { margin: 2px 0 0; font-size: calc(13.5px * var(--fs)); color: var(--sub); }
+  .sub-ind { display: none; font-size: 12px; font-weight: 700; color: var(--faint); margin: 16px 4px 6px; }
+  .show-ind .sub-ind { display: block; }
+
+  /* 문항 카드 */
+  .q { background: var(--card); border-radius: 18px; padding: 16px 18px 14px; margin: 10px 0; position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,.03); outline: 2px solid transparent; transition: outline-color .15s; }
+  .q.missing { outline-color: #ff8a8a; }
+  .q .qh { display: flex; gap: 8px; align-items: baseline; padding-right: 22px; }
+  .q .qn { flex: 0 0 auto; font-size: calc(16px * var(--fs)); font-weight: 800; color: var(--ac); }
+  .q .qx { flex: 1; min-width: 0; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; }
+  .q .qx.wrapok { white-space: normal; }
+  .q .ck { position: absolute; top: 14px; right: 14px; width: 20px; height: 20px; border-radius: 50%; background: var(--ac); color: #fff;
+    font-size: 12px; font-weight: 800; display: none; align-items: center; justify-content: center; }
+  .q.answered .ck { display: flex; animation: pop .25s ease-out; }
+  .code { display: none; font-size: 11px; font-weight: 700; color: var(--faint); background: var(--bg); border-radius: 4px; padding: 0 5px; margin-left: 4px; }
+  .show-ind .code { display: inline-block; }
+  .hint { font-size: .8em; color: var(--faint); font-weight: 600; }
+
+  .scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 11px; }
+  .scale button { border: 0; background: var(--bg); border-radius: 10px; padding: 7px 2px; cursor: pointer;
+    font-size: calc(12.5px * var(--fs)); line-height: 1.2; color: #4e5968; white-space: nowrap; transition: background .12s, color .12s; }
+  .scale button b { color: var(--ink); margin-right: 3px; font-weight: 800; }
+  .scale button:hover { background: var(--ac-soft); }
+  .scale button.on { background: var(--ac); color: #fff; } .scale button.on b { color: #fff; }
+  .scale button:focus-visible, .opt:focus-visible, .cta button:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
+
+  .opts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .opt { border: 0; background: var(--bg); border-radius: 999px; padding: 6px 13px; cursor: pointer; font-size: calc(14px * var(--fs)); color: #4e5968; }
+  .opt.on { background: var(--ac); color: #fff; }
+  .q textarea { width: 100%; font: inherit; font-size: calc(15px * var(--fs)); padding: 12px; border: 0; border-radius: 12px; background: var(--bg); min-height: 90px; margin-top: 10px; resize: vertical; }
+  .q textarea:focus { outline: 2px solid var(--ac); background: #fff; }
+
+  .cta { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: linear-gradient(to top, var(--bg) 72%, rgba(247,248,250,0));
+    padding: 14px 0 calc(10px + env(safe-area-inset-bottom)); }
+  .cta .in { max-width: 680px; margin: 0 auto; padding: 0 18px; display: flex; gap: 8px; align-items: center; position: relative; }
+  .cta button { border: 0; border-radius: 14px; font-size: 16px; font-weight: 700; padding: 14px 18px; cursor: pointer; }
+  .cta .prev { background: #e8ebef; color: #4e5968; }
+  .cta .next { flex: 1; background: var(--ac); color: #fff; box-shadow: 0 6px 16px color-mix(in srgb, var(--ac) 30%, transparent); }
+  .cta .msg { position: absolute; left: 50%; transform: translateX(-50%); bottom: 62px; background: #191f28; color: #fff; font-size: 13px; font-weight: 600;
+    padding: 8px 14px; border-radius: 999px; white-space: nowrap; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .cta .msg.show { opacity: 1; }
+  .saved { font-size: 11px; color: var(--faint); text-align: center; margin-top: 4px; height: 14px; }
+
+  .done { margin-top: 60px; text-align: center; }
+  .done .c { width: 76px; height: 76px; border-radius: 50%; background: var(--ac); color: #fff; font-size: 38px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; animation: pop .4s ease-out; }
+  @keyframes pop { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+  .done h2 { margin: 0 0 6px; font-size: 22px; } .done p { margin: 0; color: var(--sub); }
+  .memo { background: #fffbea; border: 1px solid #f5e3a3; border-radius: 14px; padding: 12px 14px; font-size: 13.5px; margin: 24px 0 0; color: #5c4a12; }
+
+  /* ===== 보고서·대시보드 공통 ===== */
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px 80px; }
+  h2.sec { font-size: 19px; font-weight: 800; margin: 28px 0 6px; }
+  .sec-desc { color: var(--sub); margin: 0 0 12px; font-size: 15px; }
+  .chips { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .chip { border-radius: 16px; padding: 14px 16px; border: 1.5px solid; }
+  .chip.grow { background: var(--grow-soft); border-color: var(--grow-line); } .chip.self { background: var(--self-soft); border-color: var(--self-line); }
+  .chip .n { font-size: 30px; font-weight: 800; line-height: 1.1; } .chip .l { font-weight: 800; } .chip .s { font-size: 13px; color: var(--sub); }
+  table.rep { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; font-size: 14px; }
+  table.rep th, table.rep td { border-bottom: 1px solid var(--bd); padding: 8px; vertical-align: top; }
+  table.rep th { background: #f8fafc; font-size: 12px; color: var(--sub); text-align: center; white-space: nowrap; }
+  table.rep td.c { text-align: center; white-space: nowrap; }
+  table.rep td.num { text-align: center; font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+  table.rep tr.grp td { background: #f2f4f8; font-weight: 800; color: var(--navy); }
+  table.rep tr.added td { background: #f7faff; }
+  .bdg { display: inline-block; font-size: 11px; font-weight: 800; padding: 1px 7px; border-radius: 6px; white-space: nowrap; }
+  .bdg.grow { background: var(--grow); color: #fff; } .bdg.self { background: var(--self); color: #fff; } .bdg.star { background: var(--star-soft); color: var(--star); }
+  .ok { color: var(--grow); font-weight: 800; } .ok2 { color: var(--self); font-weight: 800; } .no { color: #c0c7d2; }
+  .rmemo { background: #fffbea; border: 1px solid #f5e3a3; border-radius: 12px; padding: 12px 14px; font-size: 14px; margin: 14px 0; }
+
+  .flow { display: flex; height: 34px; border-radius: 10px; overflow: hidden; margin: 6px 0 10px; }
+  .flow span { display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 13px; }
+  .k-same { background: var(--star); } .k-repl { background: var(--grow); } .k-keep { background: var(--self); } .k-opin { background: #64748b; } .k-drop { background: #9ca3af; } .k-part { background: var(--warn); }
+  .klegend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13.5px; }
+  .klegend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .cmp { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
+  .cmp .b { background: #fff; border: 1px solid var(--bd); border-radius: 14px; padding: 12px; }
+  .cmp .b.hl { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .cmp .num { font-size: 28px; font-weight: 800; line-height: 1.15; } .cmp .lb { font-size: 13px; font-weight: 700; } .cmp .sb { font-size: 12px; opacity: .75; }
+  .chg { display: grid; grid-template-columns: 1.1fr 30px 1fr; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--bd);
+    border-left: 5px solid; border-radius: 12px; padding: 10px 12px; margin: 7px 0; }
+  .chg .no2 { font-size: 12px; font-weight: 800; color: var(--sub); } .chg .tx { font-size: 14px; } .chg .sc { font-size: 12px; color: var(--sub); }
+  .chg .arr { text-align: center; color: #9aa6b8; font-size: 18px; font-weight: 800; }
+  .chg .to { font-size: 14px; } .chg .why { font-size: 12px; color: var(--sub); }
+  .tagk { display: inline-block; color: #fff; font-size: 11px; font-weight: 800; padding: 1px 8px; border-radius: 6px; margin-bottom: 2px; }
+
+  /* ===== ④ 결과 대시보드 ===== */
+  .demo { background: #111827; color: #fff; border-radius: 12px; padding: 10px 14px; font-size: 13.5px; margin-top: 18px; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+  .kpi { background: #fff; border: 1px solid var(--bd); border-radius: 16px; padding: 14px 16px; }
+  .kpi .l { font-size: 12.5px; color: var(--sub); font-weight: 700; }
+  .kpi .v { font-size: 28px; font-weight: 800; line-height: 1.2; font-variant-numeric: tabular-nums; }
+  .kpi .v small { font-size: 14px; color: var(--sub); font-weight: 700; }
+  .rtabs { display: flex; gap: 8px; margin: 22px 0 6px; }
+  .rtabs button { flex: 1; border: 2px solid var(--bd); background: #fff; border-radius: 14px; padding: 12px; cursor: pointer; text-align: left; }
+  .rtabs button b { display: block; font-size: 16px; }
+  .rtabs button span { font-size: 12.5px; color: var(--sub); }
+  .rtabs button.grow.on { border-color: var(--grow); background: var(--grow-soft); }
+  .rtabs button.self.on { border-color: var(--self); background: var(--self-soft); }
+  .rpanel { display: none; } .rpanel.on { display: block; }
+  .tools { display: flex; gap: 8px; align-items: center; margin: 14px 0 8px; flex-wrap: wrap; }
+  .tools h3 { margin: 0; font-size: 16px; margin-right: auto; }
+  .copybtn { border: 0; border-radius: 10px; padding: 7px 12px; font-size: 13px; font-weight: 700; cursor: pointer; background: #111827; color: #fff; }
+  .copybtn.ok { background: var(--grow); }
+  .sumrow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .sumrow div { background: #fff; border: 1px solid var(--bd); border-radius: 12px; padding: 10px 12px; text-align: center; }
+  .sumrow .a { font-size: 12px; color: var(--sub); font-weight: 700; }
+  .sumrow .b { font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .sumrow .c { font-size: 11.5px; color: var(--faint); }
+  .ind { background: #fff; border: 1px solid var(--bd); border-radius: 16px; padding: 14px 16px; margin: 12px 0; }
+  .ind-h { display: flex; align-items: center; gap: 12px; }
+  .ind-h .no { width: 30px; height: 30px; border-radius: 9px; background: var(--self); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+  .ind-h .nm { font-weight: 800; font-size: 15.5px; flex: 1; }
+  .ind-h .avg { font-size: 24px; font-weight: 800; color: var(--self); font-variant-numeric: tabular-nums; }
+  .meter { height: 6px; border-radius: 999px; background: #eef1f5; margin: 8px 0 6px; overflow: hidden; }
+  .meter i { display: block; height: 100%; background: var(--self); border-radius: 999px; }
+  .diff { font-size: 12px; font-weight: 800; }
+  .diff.up { color: #0f7b4f; } .diff.down { color: #c2410c; } .diff.eq { color: var(--faint); }
+  .bars .row { display: grid; grid-template-columns: 170px 1fr 70px; gap: 8px; align-items: center; font-size: 13.5px; margin: 5px 0; }
+  .bars .bar { height: 14px; border-radius: 999px; background: #eef1f5; overflow: hidden; }
+  .bars .bar i { display: block; height: 100%; background: var(--self); border-radius: 999px; }
+  .bars .pct { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--sub); }
+  .texts li { margin: 4px 0; font-size: 14px; }
+
+  /* ===== ③ 보고 문서 스타일 ===== */
+  .doc { background: #fff; border: 1px solid var(--bd); border-radius: 20px; padding: 30px 36px 34px; margin-top: 22px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.03), 0 12px 32px rgba(17,24,39,.05); }
+  .doc-head { display: flex; align-items: flex-end; gap: 16px; padding-bottom: 16px; border-bottom: 2px solid #111827; }
+  .doc-head > div { flex: 1; }
+  .doc-kicker { font-size: 12px; font-weight: 800; color: var(--self); letter-spacing: .02em; }
+  .doc-head h1 { margin: 4px 0 4px; font-size: 26px; letter-spacing: -0.02em; }
+  .doc-meta { font-size: 13px; color: var(--sub); }
+  .printbtn { border: 1px solid var(--bd); background: #fff; border-radius: 10px; padding: 8px 12px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .sh { display: flex; gap: 10px; align-items: center; font-size: 17px; font-weight: 800; margin: 28px 0 12px; }
+  .sh span { font-size: 12px; color: #fff; background: #111827; border-radius: 6px; padding: 2px 8px; letter-spacing: .04em; }
+  .takes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .take { border: 1px solid var(--bd); border-top: 4px solid; border-radius: 14px; padding: 14px 16px; }
+  .take.t1 { border-top-color: #111827; } .take.t2 { border-top-color: var(--grow); } .take.t3 { border-top-color: var(--self); }
+  .take .big { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .take .tl { font-weight: 800; font-size: 15px; margin-top: 2px; }
+  .take .td { font-size: 13px; color: var(--sub); margin-top: 2px; }
+  .princ { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .princ > div { display: flex; gap: 10px; background: #f8fafc; border-radius: 14px; padding: 14px; }
+  .princ b { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; background: #111827; color: #fff; font-size: 13px;
+    display: flex; align-items: center; justify-content: center; }
+  .princ .pt { font-weight: 800; font-size: 14.5px; } .princ .pd { font-size: 13px; color: var(--sub); }
+  .ba { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 10px; align-items: center; }
+  .bx { border: 1px solid var(--bd); border-radius: 14px; padding: 14px 16px; }
+  .bx.hl { border-color: #111827; }
+  .bx .bt { font-size: 13px; font-weight: 800; color: var(--sub); }
+  .bx .bn { font-size: 30px; font-weight: 800; } .bx .bn small { font-size: 14px; color: var(--sub); margin-left: 2px; }
+  .stack { display: flex; height: 26px; border-radius: 8px; overflow: hidden; margin: 6px 0 8px; }
+  .stack span { display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 12px; white-space: nowrap; overflow: hidden; }
+  .barrow { text-align: center; font-size: 22px; font-weight: 800; color: #9aa6b8; }
+  table.doc-t { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.doc-t th { background: #111827; color: #fff; font-size: 12px; padding: 8px; text-align: center; }
+  table.doc-t td { border-bottom: 1px solid var(--bd); padding: 9px 8px; vertical-align: top; }
+  table.doc-t td.c { text-align: center; } table.doc-t td.num { text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+  table.doc-t tr:nth-child(even) td { background: #fafbfc; }
+  .effects { display: grid; gap: 8px; }
+  .effects div { display: grid; grid-template-columns: 170px 1fr; gap: 10px; border-bottom: 1px dashed var(--bd); padding: 8px 2px; font-size: 14px; }
+  .effects span { color: var(--sub); }
+
+  /* ===== ④ 참여 현황 ===== */
+  .pboard { background: #fff; border: 1px solid var(--bd); border-radius: 18px; padding: 16px 18px; margin-top: 12px; }
+  .ptop { display: flex; gap: 18px; align-items: center; }
+  .ring { flex: 0 0 auto; width: 92px; height: 92px; position: relative; }
+  .ring svg { width: 92px; height: 92px; transform: rotate(-90deg); }
+  .ring .lbl { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ring .lbl b { font-size: 22px; line-height: 1; } .ring .lbl span { font-size: 11px; color: var(--sub); }
+  .pinfo { flex: 1; }
+  .pinfo .pt { font-weight: 800; font-size: 16px; }
+  .pinfo .pt span { font-size: 12px; font-weight: 800; color: var(--self); background: var(--self-soft); border-radius: 999px; padding: 1px 8px; margin-left: 4px; }
+  .pinfo .pn { font-size: 14px; color: var(--sub); margin: 2px 0 8px; }
+  .pinfo .pn b { color: var(--ink); }
+  .pbtns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .copybtn.light { background: #eef1f5; color: var(--ink); }
+  .pmiss { margin-top: 12px; border-top: 1px dashed var(--bd); padding-top: 10px; }
+  .pl { font-size: 12.5px; font-weight: 800; color: var(--sub); margin-bottom: 6px; }
+  .chips2 { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chips2 span { background: #fff4e0; color: #92400e; border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 600; }
+  .roster { margin-top: 12px; }
+  .roster textarea { width: 100%; min-height: 120px; font: inherit; font-size: 14px; border: 1px solid var(--bd); border-radius: 10px; padding: 10px; margin-bottom: 6px; }
+
+  /* ===== ④ 응답 분포 ===== */
+  .dlegend { font-size: 12.5px; color: var(--sub); margin: 0 0 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+  .dlegend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: -6px; vertical-align: -1px; }
+  .d5 { --dc: #1e3a8a; } .d4 { --dc: #3b82f6; } .d3 { --dc: #93c5fd; } .d2 { --dc: #fbbf24; } .d1 { --dc: #f87171; }
+  .dlegend i, .mbar i { background: var(--dc); }
+  table.dist td.num.d5, table.dist td.num.d4, table.dist td.num.d3, table.dist td.num.d2, table.dist td.num.d1 { font-weight: 600; color: var(--ink); }
+  table.dist td.z { color: #c8ced6 !important; }
+  .was { font-size: 11.5px; color: var(--faint); margin-top: 2px; }
+  .mbar { display: flex; height: 5px; border-radius: 999px; overflow: hidden; margin-top: 5px; max-width: 320px; background: #eef1f5; }
+  .indcards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .icard { background: #fff; border: 1px solid var(--bd); border-radius: 14px; padding: 12px; }
+  .icard .ih { display: flex; align-items: center; justify-content: space-between; }
+  .icard .ih b { width: 24px; height: 24px; border-radius: 7px; background: var(--self); color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+  .icard .iv { font-size: 22px; font-weight: 800; color: var(--self); font-variant-numeric: tabular-nums; }
+  .icard .in { font-size: 12.5px; font-weight: 700; line-height: 1.4; margin-top: 6px; min-height: 3.5em; }
+  .icard .iq { font-size: 11.5px; color: var(--faint); }
+
+  @media print {
+    .viewtabs, .printbtn { display: none !important; }
+    .view { display: none !important; } #v-change { display: block !important; }
+    body { background: #fff; } .doc { border: 0; box-shadow: none; padding: 0; margin: 0; }
+    .wrap { max-width: none; padding: 0; }
+    table.doc-t th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .stack span, .sh span, .princ b { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  /* ===== 휴대폰 최적화 ===== */
+  @media (max-width: 560px) {
+    .fwrap { padding: 0 14px; }
+    .cover { padding: 20px 18px 18px; }
+    .cover h1 { font-size: calc(22px * var(--fs)); margin-top: 14px; }
+    .ibody { padding: 16px 18px 20px; }
+    .fsbox { top: 12px; right: 12px; }
+    .fsbox .lb { display: none; }
+    .lock { white-space: normal; }
+    .kbdhint { display: none; }
+    .rvv { max-width: 40%; }
+    .q { padding: 14px 14px 12px; border-radius: 16px; }
+    /* 척도: 세로 목록형 (엄지로 누르기 쉽게) */
+    .scale { grid-template-columns: 1fr; gap: 5px; }
+    .scale button { display: flex; align-items: center; gap: 10px; text-align: left; padding: 9px 12px; font-size: calc(14px * var(--fs)); white-space: normal; }
+    .scale button b { width: 20px; text-align: center; margin: 0; }
+    .opt { padding: 8px 14px; }
+    .cta button { padding: 15px 16px; }
+    .hdr .in { padding: 7px 14px 6px; }
+    .hdr .cnt span { display: none; }
+    .chips, .cmp { grid-template-columns: 1fr; }
+    .kpis { grid-template-columns: 1fr 1fr; } .ptop { flex-direction: column; align-items: flex-start; } .sumrow { grid-template-columns: 1fr 1fr; }
+    .chg { grid-template-columns: 1fr; } .chg .arr { transform: rotate(90deg); }
+    .bars .row { grid-template-columns: 110px 1fr 56px; }
+    table.rep .hide-sm, table.doc-t .hide-sm { display: none; }
+    .takes, .princ, .indcards { grid-template-columns: 1fr; }
+    .ba { grid-template-columns: 1fr; } .barrow { transform: rotate(90deg); }
+    .doc { padding: 20px 16px; } .effects div { grid-template-columns: 1fr; }
+  }
+
+  /* ===== 대상 선택 (교원 / 학생 / 학부모) ===== */
+  .rolebar { max-width: 760px; margin: 10px auto 0; padding: 0 16px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--sub); flex-wrap: wrap; }
+  .rolebar b { color: var(--ink); }
+  .seg { display: inline-flex; background: #e9ecf1; border-radius: 999px; padding: 2px; }
+  .seg button { border: 0; background: transparent; font-size: 12.5px; font-weight: 700; color: var(--sub); border-radius: 999px; padding: 3px 12px; cursor: pointer; }
+  .seg button.on { background: #fff; color: var(--ac); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+  .seg button:disabled { opacity: .5; cursor: default; }
+  .clsrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .clsrow select { width: 100%; font: inherit; font-size: calc(16px * var(--fs)); padding: 11px 14px; border: 0; border-radius: 12px; background: var(--bg); color: var(--ink); }
+  .clsrow select:focus { outline: 2px solid var(--ac); background: #fff; }
+  /* 변경 내역 대상 탭 */
+  .chgtabs { display: flex; gap: 6px; margin: 18px 0 4px; }
+  .chgtabs button { flex: 1; border: 1px solid var(--bd); background: #fff; border-radius: 12px; padding: 8px 10px; cursor: pointer; text-align: left; font-size: 13px; color: var(--sub); }
+  .chgtabs button b { display: block; font-size: 15px; color: var(--ink); }
+  .chgtabs button.on { border-color: #111827; box-shadow: inset 0 -3px 0 #111827; }
+  .chgtabs button.on b { color: #111827; }
+  .pend { text-align: center; padding: 50px 20px; color: var(--sub); border: 2px dashed var(--bd); border-radius: 16px; margin-top: 22px; }
+  .pend b { display: block; font-size: 18px; color: var(--ink); margin-bottom: 4px; }
+  .chk-note { margin-top: 12px; background: var(--warn-soft); border-radius: 12px; padding: 10px 14px; font-size: 13.5px; color: #7c4a03; }
+  .chk-note b { color: var(--warn); }
+  .cg-row { display: flex; gap: 6px; align-items: center; margin-top: 8px; }
+  .cg-row .g { flex: none; width: 44px; font-weight: 800; font-size: 13px; }
+  .cc { flex: 1; min-width: 0; background: var(--bg); border-radius: 8px; padding: 4px 6px; font-size: 12px; text-align: center; color: #344054; }
+  .cc b { font-variant-numeric: tabular-nums; }
+  .cc .bar { height: 4px; background: #e5e7eb; border-radius: 2px; margin-top: 3px; overflow: hidden; }
+  .cc .bar i { display: block; height: 100%; background: var(--self); }
+  .cc.low { background: var(--warn-soft); color: #7c4a03; } .cc.low .bar i { background: var(--warn); }
+  .txq { font-weight: 800; margin: 10px 0 4px; }
+  @media print { .rolebar, .chgtabs { display: none !important; } }
+
+  /* ===== 연구부장님 검토본 ===== */
+  .viewtabs button[data-view="v-report"], .viewtabs button[data-view="v-dash"], #acSel { display: none !important; }
+  .viewtabs .ttl { color: #fde68a; }
+  .ck { max-width: 820px; }
+  .ck-hero { background: linear-gradient(135deg, #1e3a6e, #1f4db3); color: #fff; border-radius: 20px; padding: 24px 28px; margin-top: 22px; }
+  .ck-hero .k { font-size: 12px; font-weight: 800; color: #bfdbfe; letter-spacing: .03em; }
+  .ck-hero h1 { margin: 4px 0 6px; font-size: 24px; letter-spacing: -0.02em; }
+  .ck-hero p { margin: 0; font-size: 14.5px; color: #dbeafe; }
+  .ck-step { background: #fff; border: 1px solid var(--bd); border-radius: 16px; padding: 18px 20px; margin-top: 12px; }
+  .ck-step .hd { display: flex; align-items: center; gap: 10px; }
+  .ck-step .no { flex: none; width: 28px; height: 28px; border-radius: 50%; background: #111827; color: #fff; font-weight: 800; display: grid; place-items: center; font-size: 14px; }
+  .ck-step .tt { font-weight: 800; font-size: 17px; }
+  .ck-step .dd { margin: 6px 0 0 38px; font-size: 14px; color: var(--sub); }
+  .ck-step .dd b { color: var(--ink); }
+  .ck-go { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0 0 38px; }
+  .ck-go button { border: 1px solid var(--ac-line); background: var(--ac-soft); border-radius: 12px; padding: 9px 12px; cursor: pointer; text-align: left; font-size: 12.5px; color: var(--sub); }
+  .ck-go button b { display: block; font-size: 15px; color: var(--ac); }
+  .ck-go button:hover { border-color: var(--ac); }
+  .ck-foot { margin-top: 16px; text-align: center; font-size: 13.5px; color: var(--sub); }
+  @media (max-width: 640px) { .ck-go { grid-template-columns: 1fr; margin-left: 0; } .ck-step .dd { margin-left: 0; } }
+  @media print { #v-check { display: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="viewtabs"><div class="in">
+  <span class="ttl">연구부장님 검토본</span>
+  <button data-view="v-check" class="on">📋 설문(안) 안내</button>
+  <button data-view="v-form">① 응답자 화면</button>
+  <button data-view="v-report">② 보고서용 문항 정리</button>
+  <button data-view="v-change">② 작년 대비 변경 내역</button>
+  <button data-view="v-dash">④ 결과 대시보드</button>
+  <select id="acSel" title="포인트 색">
+    <option value="">● 청학 블루 (기본)</option>
+    <option value="ac-indigo">● 인디고</option>
+    <option value="ac-violet">● 바이올렛</option>
+    <option value="ac-emerald">● 에메랄드</option>
+    <option value="ac-coral">● 코랄</option>
+    <option value="ac-black">● 블랙</option>
+  </select>
+</div></div>
+
+<!-- ① 응답자 화면 -->
+<div class="view on" id="v-check">
+  <div class="wrap ck">
+    <div class="ck-hero">
+      <div class="k">2026 교육공동체 만족도 조사(안)</div>
+      <h1>설문(안)을 정리해 보았습니다</h1>
+      <p>결대로자람학교 성장평가 만족도조사와 학교자체평가 설문을 대상별로 하나로 합친 안입니다.<br>바쁘신 중에 살펴봐 주시면 감사하겠습니다.</p>
+    </div>
+
+    <div class="ck-step">
+      <div class="hd"><span class="no">1</span><span class="tt">응답자별 설문 문항</span></div>
+      <div class="dd">선생님 · 학생 · 학부모님이 실제로 보시는 화면입니다.</div>
+      <div class="ck-go">
+        <button type="button" data-go="v-form:T"><b>교원 →</b>28문항</button>
+        <button type="button" data-go="v-form:St"><b>학생 →</b>17문항</button>
+        <button type="button" data-go="v-form:P"><b>학부모 →</b>22문항</button>
+      </div>
+    </div>
+
+    <div class="ck-step">
+      <div class="hd"><span class="no">2</span><span class="tt">작년 대비 변경 내역</span></div>
+      <div class="dd">작년 자체평가(자율지표) 문항 중 <b>결대로자람 문항과 내용이 겹치는 것은 결대로 문항으로 대체</b>했습니다.</div>
+      <div class="ck-go">
+        <button type="button" data-go="v-change:T"><b>교직원 →</b>34 → 28문항</button>
+        <button type="button" data-go="v-change:St"><b>학생 →</b>22 → 17문항</button>
+        <button type="button" data-go="v-change:P"><b>학부모 →</b>28 → 22문항</button>
+      </div>
+    </div>
+
+    <div class="ck-foot">위쪽 탭에서도 바로 보실 수 있습니다 · 실시 예정 11. 30.(월) ~ 12. 3.(목)</div>
+  </div>
+</div>
+
+<div class="view" id="v-form">
+  <div class="rolebar"><b>대상</b><span class="seg" id="audSeg"><button type="button" data-aud="T" class="on">교원 (28문항)</button><button type="button" data-aud="St">학생 (17문항)</button><button type="button" data-aud="P">학부모 (22문항)</button></span><span>· 대상별로 링크가 따로 나갑니다</span></div>
+  <div class="hdr" id="hdr"><div class="in">
+    <div class="top">
+      <div class="no" id="hNo"></div>
+      <div class="tt"><div class="t1" id="hT1"></div><div class="t2" id="hT2"></div></div>
+      <div class="cnt" id="hCnt"></div>
+    </div>
+    <div class="segs" id="hSegs"></div>
+  </div></div>
+
+  <div class="fwrap">
+    <div id="introPage">
+      <div class="intro">
+        <div class="cover">
+          <div class="fsbox"><div class="lb">글씨 크기 조절</div>
+            <span class="fsctl"><button class="s" data-fs="0.9">가</button><button class="m on" data-fs="1">가</button><button class="l" data-fs="1.15">가</button></span>
+          </div>
+          <div class="brand"><img src="data:image/jpeg;base64,/9j/2wBDAA8LDA0MCg8NDA0REA8SFyYZFxUVFy8iJBwmODE7OjcxNjU9RVhLPUFUQjU2TWlOVFteY2RjPEpsdGxgc1hhY1//2wBDARARERcUFy0ZGS1fPzY/X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX1//wAARCAByAHkDASIAAhEBAxEB/8QAGwAAAQUBAQAAAAAAAAAAAAAABgABBAUHAwL/xAA7EAACAQMBBwIDBgMHBQAAAAABAgMABAURBhITITFBUWFxIjJCFBVSgZGhFiOxJDM0U2KC4UNyksHR/8QAGQEAAgMBAAAAAAAAAAAAAAAAAgMAAQQF/8QAJhEAAgIBBAEEAgMAAAAAAAAAAAECAxEEEiExQRMiMlEUcSNCgf/aAAwDAQACEQMRAD8A0SlTcqVQgqY9K5zTJDGzyMFVRqSTyFAmY2oub2drTEhgh+HeA+J/bxTK6pWPgFywE+Uz9hjdVlk3pPwJzNCtxtfk7x+Hj7cR6+BvE1JxGxzTDj5Zm3jz4YPP8zRdZ460sowltAiAeBz/AFrRmmrhLLA90gBFjtRkdWZ7hQezSFR+lev4Tzb83ddfWUmtGArncGRYXMIBkA+EHoTUWsnHiKwT015M8/hvaG35xSMNO6TEGkuR2mxYPF4zIP8ANBYfrV1b7YxJcm3yNq9synRmB3gPy60R211aX8QeCRJUPjnRyun3ZHJSivDBnHbbQyMEv4uEfxrzFFVtdQ3UQkgkV0PdTVTktmcdf7z8PhSkfMnL9qEbi0y2y91xYXLQH6wNVI9R2oPTqt+HD+i8uPZpYNPVDgdoIMtHuNpFcr8ya9far3UVllBweGMTT6PVKm1FPQlnmvMjhEZidABqSe1eqENtMubeAWEDfzJh8ZHZfH50dcHOSSKbwipzuYuM3ejHWAPC3t3l9Z8+1E+B2fgxUYdgJLk/M5HT2qJsjhRZ2wu50/nyjlr1Ve1EryLEhZiAB5p9tqX8cOgIryzoKeqi2ztpcziFBIpPdl0ArtNk4YL6GzKsXlGqkdKzuEl2HlFjrTHxUC/ykFioL6uSdNF5muK5u2aykuiGCp1Uj4qmyWMlbkD+2uG3l+8oE+JeUoA6jzQhZX1zYTia2kKMD0B5H3rVkeHKY3fC6xzIeRrJLmJoLiSJxoUYjSuvoZqcXXNdCbFh5RqWEzEeRxi3LkRsvwuCehqyljjnjKSKHRhoQe4rO9ln4lpk7Qn+8h3gPUVY7KbQNvLjb1yxPwxuevsaxXadxlLb4DU01yQ89gZsNcDIY5m4QbXQdU/4on2czaZa10fQXEYAdfPrVxNEk0TRyKGVhoQe9ZveW8+zGfWaEngk6qfKnqKuMlfHbLtdEeYvPg00aU9R7S4jureOeJtVcAiu9YsY4Y3sYkAak6DyaAL3HyPthEb6QfZ5n30bsQOgoo2nuGtsJcsp0Yrug+9CuJu/tONS1yylrV23Ibg/9Nq1UxlGDmv0Lk10H4AAAXoKq9oGtlsNbtJHTe5CPqTUTGX8tjdDGZJ94n+5nPRx4q7n3mgcR6b+nw+9IxtkFnKAJbJ7Z1uryzkFpN8qhtWTxU+MXQz2PFzuabn8vd6he2vrXiCSNWdc4bsza+Tp+1dcfE02ailsUma2QfE0w109ta1uec5FpD7SJEuSRGjSFJBvNOyluf5VEgjjbG5BkjVuGuiTKpG9rRRksZPeyK0d48KgaFQuoqqyOLvrOwkkXIyOFGu5ujnQQsWEiNPOSbsubr7sjFxGiRADhEdSPWgLaRN3P3qjpxP/AFWkYRnfD2zy/OU56jSs12gkEmdvHHMcStOgy72yrPiiw2NXXJza/LwW1qptmaPLRmPXVZxp/wCVXeyYEVrk7o8uHFoD+tVmBha5zdty1Ak329hzrU2nKxsBeEaFZZZZ8tc45gA8IBU+eVcdrMaL7EuygcWH41P9f2oTxl21ztktwhI4kp/TTStHkQSIyMNQw0NcqcXTYmh0XuTBLYS/MlrLZuecR3lB66GjDlWb4VjjNrmhPJWdo9PQ9K0fWr1McTyvJIPgFtu3K4mNR0aQA102YsobjZpYpkDpLrqDXLbxScVC3ZZBr+lTNjnD4GHTsSKvL/HX7J/YgXNuLfdxWSJa2Y/2a6+pD2BNU75TM7P33AnkNxF9PE5hh6Gj2+sob22eGdd5W/UeooUubddxcRmeYP8Ahrr+gJ81VU45xJZJLjovMNmbPMREoAsq/NG3UVbKqjoAB4rKHjvNn8qpblIh11HRxWmYvIwZGzS4gbUMOY7g+Kmop2e6PTJGWeydpXlgD1pw2tcbi5htomlndURRqSx0rLhvoYcMndx2GPnnfQKinT37CsgkcySO7cyxJNX+0+f+9ZRBbki1Q6jX6z5oerv6DTuuO6XbMtksss4smsGDksYkIllfV3/01LxDLjsTd5FiRLKOBD+fMn9qoda977tGIyzFRzC68ta0T06w8eXlgqQQ7GWwkyrXEh0S3QuSfNaPG6yIrodVYais8cthsPFZDleXpBk/0r2rQLZdy2iT8KgVxNW90t3gfX9ABmBwdtomHeSM1oGp80AZv+ZtrEB+OMUf6N4qX/GOfouPkqdq4OPgrgAaso3hVbsFcq9hNba/FG+unoaKZ4llgkjPR1IrOsHM2E2na2lYiN2MZ9fwmqq99Th/pJcSTNK6ioWSsIL+0eCddQeYPdT5FSwdRTnnWTOGH2Bdxbi4H3RmTuzr/hrn8VDIlyeAvJIkkaFgen0t61peWx0ORtTFKNGHNHHVD5FC80IvlbE5jdW+jH9nn/zBW/T3rqXX0LlEqBtfmAunFjPruCoVxf5TNSiN5HmbqI15D9Kh3drNZ3D29whWRT3qz2UljhzaPLIsa7jDeY6AV05V1wrdkEJTb4Z7xWAu58hFHeWkqQMTvHppXG9wV9HeTJb2czRKxCnTXUUV4y2uFycbtn0uU1J4IbXe/ek8M0eWaaXaCMQh9TAW6Dx1rF+XZuyHsWAAljeGRo5FKup0ZT2NW+Ct7ZN/I35Ahg+RD1dqhZlkkzF66MGVpmII6HnXG2gnu5Ft4FZ2J+XsPWulJuylZeBa4kW+OFxndoklmBb4w7eFA6VppISPwAKpdmsTDjbIFGWWWTm8i8wfSum0t+uPw8z6jiONxB5J5Vw7pK2xRiuB8VtXIIYwHJ7YmXXULIX/ACHStI0oL2DstEmvnX5juKf60aUOql79q8BVrgVBW2uKYhcnADqnKTTr6GjbSuc0UcsTxyKGRgQRp1FKqsdclJFyWUUOyuYGRslilYfaIhusPI80RVmuRsLvZrJrd2hJhLaqe2n4TRphc1b5a3EkZ3ZB88ZPMU6+pfOHTBjLwy1PTpVZl8TFkYAPkmTnHIOqmrSlWWLaeUG+QFmt1y2/jskogycIPDk7SChC5tpbWZoLhCkinQg1qObxCZGJXibg3UR3opV5EGhq6tznI2t7qMQZa3HLsJBXU0up28PoTOALWV3LZXUdzCRxE6a1zuZnuZ5JpPnkbeOnmmmikhkaKVCjqdCpHSufvXZjCD9yE5fTPcKo0qrI+4mvxNproKubRnvJlx2HiaNJCOJL9RHfU9h6UsTs3e5IB+UMJ57zc9faj7F4m0w9uViADaavI3U1zdZqIJ7VyxkIt8kq1ghsLGOFTuxxLpqaz/M3sm0ObjtLYExKxVNO/lqn7SbRNds2NxurBjus6/V6CrbZbAjGw/aLgA3UgH+weKwwXoxdku30Mfu4Rd4+zjsbOK2iHwoNPc+al0qVYZNt5Gj0x6U9KrIRby1hvIGgnQMjDoaAMlg8hgrr7XjmkaFee+vVfQjxWkV5dQykEAg9jTqrpV8doGUc8gliNsLecCLIkQSfj+k//KKYJ4p0DxSLIp6FTqDVBltk7K+LSwjgSnuo5H8qG5cJn8Q+/Zu7r5ibl+hprrqt5i8MDLXZpBqizuIa7C3Vm3DvYeaMOWvpQvDtXmbUblxDxCO7oQakDbm4HJrJNf8AuqR01sXlcluaZ5u4I9oLdzw+Bl7cfHEeW+BQnKjxyNHIhR1OjKe1W9/m5r29jvILfgXCfUmp1965y2+TzV0Zls2Zz1Krug109PKVXE+hMvccsbmL7GuDbzHd7o3NTVneZzK50raWsTKG+ZY9efufFTMdsTPJuvfyiNeu4nM0YWGMtMfGEtoVQee5/Os2p1FG7MVlhxjJ9lNs9s1HjlW4ugJLk9uyf80T6U4p65s7JWPMhyWBqelSoCxUqVKoQVMaVKoQY0x60qVWgZHCaONgd5FPuKqprS1L87aE/wCwUqVbKhMiXa21uvywRD2QVYRqoHIAflSpUq0OA46UjSpUgahx0r1SpVRBUqVKoQ//2Q==" alt="청학중학교"><div><div class="s1">청학중학교</div><div class="s2">2026 학교 교육활동 만족도 조사 · 교직원</div></div></div>
+          <h1 id="iH1">선생님의 한 해, 어떠셨나요?</h1>
+          <p id="iP">결대로자람학교 성장평가와 학교자체평가에 함께 쓰이고, 다음 해 교육계획에 반영됩니다.</p>
+          <div class="chiprow"><div class="due" id="dueChip"></div><div class="due" id="infoChip"></div></div>
+        </div>
+        <div class="ibody">
+          
+          <div class="road" id="road"></div>
+          <div class="resume" id="resume"></div>
+          <div class="field">
+            <div id="whoBox">
+              <label for="who">성명 (참여 확인용)</label>
+              <input id="who" type="text" placeholder="이름을 입력해 주세요" autocomplete="name">
+            </div>
+            <div id="clsBox" style="display:none">
+              <label id="clsLbl">학년 · 반 (이름은 쓰지 않아요)</label>
+              <div class="clsrow">
+                <select id="gSel"><option value="">학년 선택</option><option>1</option><option>2</option><option>3</option></select>
+                <select id="cSel"><option value="">반 선택</option></select>
+              </div>
+            </div>
+            <div class="lock" id="lockTx">🔒 성명은 참여 확인에만 쓰고 응답과 따로 저장해요 · 💾 답은 자동 저장돼요</div>
+            <div class="kbdhint">⌨️ PC에서는 숫자키 1~5로도 답할 수 있어요</div>
+          </div>
+          <label class="review"><input type="checkbox" id="indToggle"> [검토용] 지표·문항 번호 보이기 — 배포 때는 빠집니다</label>
+        </div>
+      </div>
+    </div>
+
+    <div id="pages"></div>
+    <div id="reviewPage" style="display:none"></div>
+
+    <div id="donePage" class="done" style="display:none">
+      <div class="c">✓</div>
+      <h2>소중한 의견 감사합니다!</h2>
+      <p id="doneTx">보내주신 의견은 내년 교육계획에 꼭 반영할게요.</p>
+      <p style="font-size:12px;margin-top:10px;color:var(--faint)">(미리보기입니다. 실제로 저장되지는 않습니다.)</p>
+    </div>
+  </div>
+
+  <div class="cta" id="cta"><div class="in">
+    <button class="prev" id="btnPrev" type="button">이전</button>
+    <button class="next" id="btnNext" type="button"></button>
+    <div class="msg" id="toast"></div>
+  </div><div class="saved" id="saved"></div></div>
+  <div class="tip" id="tip"></div>
+</div>
+
+<!-- ② 보고서용 -->
+<div class="view" id="v-report">
+  <div class="wrap">
+    <div class="chgtabs" id="repTabs">
+      <button type="button" data-aud="T" class="on"><b>교직원</b><span id="rpT"></span></button>
+      <button type="button" data-aud="St"><b>학생</b><span id="rpSt"></span></button>
+      <button type="button" data-aud="P"><b>학부모</b><span id="rpP"></span></button>
+    </div>
+    <h2 class="sec">어떤 문항을 어느 보고서에 쓰나요?</h2>
+    <p class="sec-desc">설문은 하나지만, 결과는 두 보고서에 나눠 씁니다. 결과 대시보드(④)도 같은 구분으로 나뉩니다.</p>
+    <div class="chips">
+      <div class="chip grow"><div class="l">결대로자람 성장평가 보고서</div><div class="n" id="nGrow"></div><div class="s">교육청 문항만 사용 · 결과처리 엑셀(붙임3)에 그대로 입력</div></div>
+      <div class="chip self"><div class="l">학교자체평가 보고서 (자율지표)</div><div class="n" id="nSelf"></div><div class="s">작년 문항과 1:1로 연결된 올해 문항만 사용 · 전년 대비 비교 · 자율지표 5개 요약</div></div>
+    </div>
+    <h2 class="sec" id="repH2">문항별 정리표 (교직원 설문 순서)</h2>
+    <p class="sec-desc"><span class="bdg grow">결대로</span> 교육청 고정 문항 · <span class="bdg self">추가</span> 자체평가용 문항 · <span class="bdg star">★ 작년 동일</span> 작년 자체평가와 같은 내용</p>
+    <div style="overflow-x:auto"><table class="rep" id="repTable"></table></div>
+  </div>
+</div>
+
+<!-- ③ 작년 대비 변경 내역 -->
+<div class="view" id="v-change">
+  <div class="wrap">
+    <div class="doc">
+      <div class="doc-head">
+        <div>
+          <div class="doc-kicker">학교자체평가 × 결대로자람학교 성장평가 · 설문 통합</div>
+          <h1>2026 교육공동체 설문 문항 개편안</h1>
+          <div class="doc-meta">보고: 교육연구부장 · 작성: 결대로자람학교 담당 · 2026. 11.</div>
+        </div>
+        <button class="printbtn" type="button" onclick="window.print()">🖨 인쇄 · PDF 저장</button>
+      </div>
+
+      <div class="chgtabs" id="chgTabs">
+        <button type="button" data-aud="T" class="on"><b>교직원</b><span id="ctT"></span></button>
+        <button type="button" data-aud="St"><b>학생</b><span id="ctSt"></span></button>
+        <button type="button" data-aud="P"><b>학부모</b><span id="ctP"></span></button>
+      </div>
+      <div class="pend" id="chgPend" style="display:none"><b>학부모용 작업 중입니다</b>교직원·학생과 같은 방식으로 정리할 예정이에요.</div>
+      <div id="chgBody">
+      <div class="sh"><span>01</span>핵심 요약 · <span id="audNm" style="background:none;color:inherit;font-size:inherit;padding:0">교직원</span></div>
+      <div class="takes">
+        <div class="take t1"><div class="big">2 → 1</div><div class="tl">설문 통합</div><div class="td">결대로 만족도조사 + 자체평가 자율지표 설문을 한 번에 실시</div></div>
+        <div class="take t2"><div class="big"><span id="dOld">34</span> → <span id="dNew"></span></div><div class="tl">문항 <span id="dCut"></span> 감소</div><div class="td">따로 실시할 때보다 응답 부담 감소</div></div>
+        <div class="take t3"><div class="big"><span class="dOldN"></span> = <span class="dOldN"></span></div><div class="tl">작년 체계 유지</div><div class="td">작년 <span class="dOldN"></span>문항이 모두 올해 문항과 연결 → 전년 대비 비교 가능</div></div>
+      </div>
+
+      <div class="sh"><span>02</span>개편 원칙</div>
+      <div class="princ">
+        <div><b>1</b><div><div class="pt">결대로 문항 우선</div><div class="pd">교육청 필수 <span id="nGfix">19</span>문항은 문구 수정 없이 그대로 사용</div></div></div>
+        <div><b>2</b><div><div class="pt">같은 내용은 하나로</div><div class="pd">결대로 문항과 겹치는 작년 문항은 결대로 문항으로 대체</div></div></div>
+        <div><b>3</b><div><div class="pt">대상별 문항은 대상 설문에서</div><div class="pd">결대로에 없는 내용만 추가 문항으로 남김</div></div></div>
+      </div>
+
+      <div class="sh"><span>03</span>설문 구성 변화</div>
+      <div class="ba">
+        <div class="bx">
+          <div class="bt" id="btOld">2025 자체평가 (교원)</div>
+          <div class="bn"><span class="dOldN"></span><small>문항</small></div>
+          <div class="stack" id="stackOld"></div>
+          <div class="klegend" id="flowLegend"></div>
+        </div>
+        <div class="barrow">→</div>
+        <div class="bx hl">
+          <div class="bt" id="btNew">2026 통합 설문 (교원)</div>
+          <div class="bn"><span id="dNew2"></span><small>문항</small></div>
+          <div class="stack" id="stackNew"></div>
+          <div class="klegend" id="newLegend"></div>
+        </div>
+      </div>
+
+      <div class="sh"><span>04</span>문항별 변경 내역</div>
+      <div style="overflow-x:auto"><table class="doc-t" id="chgTable"></table></div>
+      <div id="chgNote"></div>
+
+      <div class="sh"><span>05</span>기타 변경 및 기대 효과</div>
+      <div class="effects" id="effects"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ④ 결과 대시보드 -->
+<div class="view" id="v-dash">
+  <div class="wrap">
+    <div class="chgtabs" id="dashTabs">
+      <button type="button" data-aud="T" class="on"><b>교직원 결과</b><span id="dtT"></span></button>
+      <button type="button" data-aud="St"><b>학생 결과</b><span id="dtSt"></span></button>
+      <button type="button" data-aud="P"><b>학부모 결과</b><span id="dtP"></span></button>
+    </div>
+    <div class="demo">📊 <b>예시 데이터</b>로 보여 주는 화면이에요. 실제 응답이 모이면 구글 시트에서 자동으로 불러와 같은 모양으로 계산해요.</div>
+    <div class="kpis" id="kpis"></div>
+
+    <div class="pboard" id="tboard">
+      <div class="ptop">
+        <div class="ring" id="pRing"></div>
+        <div class="pinfo">
+          <div class="pt">참여 현황 <span id="pDday"></span></div>
+          <div class="pn" id="pNums"></div>
+          <div class="pbtns">
+            <button class="copybtn" type="button" id="btnMissCopy">미참여 명단 복사</button>
+            <button class="copybtn light" type="button" id="btnMsgCopy">독려 메시지 복사</button>
+            <button class="copybtn light" type="button" id="btnRoster">교직원 명단 편집</button>
+          </div>
+        </div>
+      </div>
+      <div class="pmiss"><div class="pl">아직 참여하지 않은 분</div><div class="chips2" id="pMiss"></div></div>
+      <div class="roster" id="rosterBox" style="display:none">
+        <div class="pl">교직원 명단 (한 줄에 한 명 · 엑셀에서 이름 열을 복사해 붙여넣기)</div>
+        <textarea id="rosterTa"></textarea>
+        <button class="copybtn" type="button" id="btnRosterSave">저장</button>
+        <span style="font-size:12px;color:var(--faint)">이 컴퓨터에만 저장돼요.</span>
+      </div>
+    </div>
+
+    <div class="pboard" id="cboard" style="display:none"></div>
+
+    <div class="rtabs">
+      <button class="grow on" data-r="r-grow"><b>📗 결대로자람 성장평가 보고서</b><span id="rtG">결대로 19문항 · 붙임1·붙임3 양식 그대로</span></button>
+      <button class="self" data-r="r-self"><b>📘 학교자체평가 보고서</b><span id="rtS">작년 15문항에 대응하는 2026 문항 · 2025와 비교</span></button>
+    </div>
+
+    <div class="rpanel on" id="r-grow">
+      <div class="tools"><h3>영역별 요약 (붙임1 「교육공동체 학교 만족도 조사 결과」 하단 표)</h3>
+        <button class="copybtn" data-copy="growSum">표 복사</button></div>
+      <div class="sumrow" id="growSum"></div>
+      <div class="tools"><h3>문항별 응답 분포 · 평균 · 표준편차</h3><button class="copybtn" data-copy="growTbl">표 복사 (한글·엑셀 붙여넣기)</button></div>
+      <div class="dlegend"><i class="d5"></i>5 매우 그렇다 <i class="d4"></i>4 대체로 그렇다 <i class="d3"></i>3 그렇다 <i class="d2"></i>2 별로 그렇지 않다 <i class="d1"></i>1 전혀 그렇지 않다 <span>(숫자 = 응답 인원)</span></div>
+      <div style="overflow-x:auto"><table class="rep dist" id="growTbl"></table></div>
+      <p class="sec-desc" style="margin-top:8px;font-size:13px">※ 표준편차는 교육청 결과처리 엑셀(붙임3)과 같은 방식(모집단 표준편차)입니다. ‘영역 합계’는 붙임3의 ‘만족도 평균의 합’과 같습니다.</p>
+    </div>
+
+    <div class="rpanel" id="r-self">
+      <div class="tools"><h3>자율지표 5개 요약</h3><button class="copybtn" data-copy="selfSum">요약표 복사</button></div>
+      <div class="indcards" id="selfCards"></div>
+      <table id="selfSum" style="display:none"></table>
+
+      <div class="tools"><h3 id="h3Self">자체평가 15문항 결과 · 작년 문항 대응 (2025 비교)</h3><button class="copybtn" data-copy="self15">표 복사 (한글·엑셀 붙여넣기)</button></div>
+      <div class="dlegend"><i class="d5"></i>5 <i class="d4"></i>4 <i class="d3"></i>3 <i class="d2"></i>2 <i class="d1"></i>1 <span>(숫자 = 응답 인원) · 회색 글씨는 비교용 2025 문항</span></div>
+      <div style="overflow-x:auto"><table class="rep dist" id="self15"></table></div>
+      <div class="rmemo">⚠ 작년과 올해 척도의 3점 의미가 달라요 (작년 ‘보통이다’ → 올해 ‘그렇다’). 변화폭은 참고용으로 해석해 주세요.</div>
+
+      <div class="tools" id="tOpt"><h3>선택형 결과</h3></div>
+      <div id="selfOpts"></div>
+      <div class="tools"><h3>서술형 의견</h3></div>
+      <div id="selfTexts"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== 설정 ===== */
+var CFG = { start: '2026-11-30', end: '2026-12-03', endLabel: '12. 3.(목)', total: 31 };
+/* 반별 재적 인원 (청학중학교 재적현황표 2026. 11. 26. 확인) */
+var CLASS_N = [[17, 16, 17, 17, 16], [20, 20, 20, 20], [20, 20, 20, 19, 17]];
+var CLASSES = CLASS_N.map(function (g) { return g.length; });
+var GRADE_N = CLASS_N.map(function (g) { return g.reduce(function (a, b) { return a + b; }, 0); }); // 83 · 80 · 96 = 259
+function classSize(g, c) { return CLASS_N[g][c - 1]; }
+
+/* ===== 데이터 ===== */
+var AREAS = [
+  { k: '1', ic: '🏫', short: '학교문화', mini: '학교문화', name: '학생주도성 발현을 돕는 학교문화 조성' },
+  { k: '2', ic: '📚', short: '교육과정', mini: '교육과정', name: '삶 중심의 배움을 만드는 읽걷쓰 기반 미래형 교육과정' },
+  { k: '3', ic: '🤝', short: '전문적 학습공동체', mini: '전학공', name: '학생의 성장을 이끄는 전문적 학습공동체 운영' },
+  { k: '4', ic: '🌱', short: '전반적인 운영', mini: '전반 운영', name: '결대로자람학교 운영 전반에 대한 생각' },
+  { k: 'E', ic: '💬', short: '다음 해를 위한 의견', mini: '선택·서술', name: '복수 선택 3문항 · 서술형 1문항 · 비워도 제출할 수 있어요', extra: true }
+];
+var SUBS = {
+  '1-1': '수평적 소통과 협력의 학교문화 조성', '1-2': '함께 만들어가는 신뢰와 존중의 관계 형성', '1-3': '모두의 성장을 이끄는 교육지원체제 마련',
+  '2-1': '앎과 삶을 연결하는 미래형교육과정 운영', '2-2': '학생의 주도적 성장을 위한 수업·평가 혁신 강화',
+  '3-1': '연구와 실천을 위한 지원체제 조성', '3-2': '교육과정 기획·실행을 위한 전문성 신장', '4-1': '전반적인 운영'
+};
+var SELF_IND = {
+  '1': '결대로자람학교 운영과 연계한 학생 성장 중심 교육활동 운영', '2': '학생 참여 중심 체험·진로교육 운영',
+  '3': '교육공동체 소통 및 협력 활성화', '4': '안전하고 쾌적한 교육환경 조성', '5': '학생 맞춤형 지원 및 다양성 존중 교육 강화'
+};
+
+/* 문항: [코드, 출처 G/S/E, 문항, 자율지표, ★작년 동일, 비고, 유형 L/M/T, 보기] */
+var Q = [
+  ['1-1-1','G','우리 학교는 구성원의 새로운 교육적 시도를 서로 지지하는 분위기가 형성되어 있다.','3','',''],
+  ['1-1-2','G','우리 학교는 교직원 회의에서 서로 자유롭게 의견을 내고 토론하는 분위기가 정착되어 있다.','3','','작년 8 대체'],
+  ['1-1-3','S','우리 학교는 학생 자치 활동이 학생 중심으로 활발하게 운영되고 있다.','2','','작년 11 유지'],
+  ['1-1-4','S','우리 학교는 학생 의견을 수렴하고 소통하기 위한 방안이 마련되어 있다.','3','','작년 7 유지'],
+  ['1-2-1','G','우리 학교는 교육활동 운영을 통해 구성원 간 관계가 긍정적으로 형성되어 가고 있다.','3','','작년 9 대체'],
+  ['1-2-2','G','우리 학교는 갈등이나 문제가 발생하더라도 구성원이 협력해서 해결할 수 있다는 기대가 있다.','3','',''],
+  ['1-2-3','S','우리 학교는 학생의 올바른 인성 함양을 위한 교육활동(상호존중, 집단상담, 다문화 이해 등)을 꾸준히 실천하고 있다.','5','','작년 3 유지'],
+  ['1-3-1','G','우리 학교는 교사가 수업과 학생 지도에 집중할 수 있도록 적절한 지원을 제공하고 있다.','4','작년 6',''],
+  ['1-3-2','G','우리 학교는 담당 교사가 자신의 업무를 자율적으로 판단하고 추진할 수 있도록 업무 추진 권한이 부여되어 있다.','4','',''],
+  ['1-3-3','S','우리 학교의 기초보충학습 프로그램은 학생의 기초학력 향상을 효과적으로 지원하고 있다.','5','','작년 10 유지'],
+  ['2-1-1','G','우리 학교는 읽걷쓰 기반 지역 연계 교육과정을 운영한다.','1','',''],
+  ['2-1-2','G','우리 학교는 학생이 자신의 강점과 흥미·적성을 발견할 수 있는 교육활동 기회를 제공한다.','2','작년 2',''],
+  ['2-1-3','S','우리 학교 교육과정은 교육공동체(학생·학부모·교사)의 의견을 반영하여 수립되었다.','3','','작년 1 유지'],
+  ['2-2-1','G','우리 학교는 질문과 토론이 있는 참여형 수업을 운영한다.','1','','작년 4 대체'],
+  ['2-2-2','G','우리 학교는 학생의 성장을 지원하는 과정 중심 평가를 하고 있다.','1','작년 5',''],
+  ['3-1-1','G','우리 학교는 전문적학습공동체를 월 1회 이상 정례화하여 운영한다.','1','',''],
+  ['3-1-2','G','우리 학교는 구성원의 주도적 참여와 역할 분담을 통한 협력적 연구 문화가 조성되어 있다.','1','',''],
+  ['3-2-1','G','우리 학교는 새 학년이 시작되기 전, 교육과정 기획 및 수업 설계를 위한 워크숍을 3일 이상 운영한다.','1','',''],
+  ['3-2-2','G','우리 학교는 전문적학습공동체 간 수업 나눔 및 성찰을 하고 있다.','1','',''],
+  ['4-1-1','G','나는 우리 학교의 결대로자람학교 운영에 전반적으로 만족한다.','1','',''],
+  ['4-1-2','G','우리 학교는 결대로자람학교 취지에 맞게 운영하고 있다.','1','',''],
+  ['4-1-3','G','우리 학교는 학생의 자기 주도성 성장에 기여하고 있다.','1','',''],
+  ['4-1-4','G','우리 학교는 학생의 공동체성 성장에 기여하고 있다.','1','',''],
+  ['4-1-5','G','나는 결대로자람학교에서 근무하면서 교사로서 성장하고 있다는 느낌을 받는다.','1','',''],
+  ['E-1-1','E','올해 학교 교육활동 중 가장 잘 운영되었다고 생각하는 사업을 골라 주세요.','공통','작년 12','','M',['교수학습 활동','동아리 활동','생활지도·상담·인성','방과후학교','독서교육','진로교육','창체 활동(축제·체육한마당·현장체험학습)','봉사활동','학교 환경개선','기타']],
+  ['E-1-2','E','다음 해 생활지도에서 우선 강화가 필요한 부분을 골라 주세요.','4','작년 13','','M',['기본생활습관','학교폭력예방','안전교육','금연교육','기타']],
+  ['E-1-3','E','다음 해 학교 교육 환경에서 개선이 필요한 부분을 골라 주세요.','4','작년 14','','M',['화장실','식수대','급식실','교실 환경','특별실 환경','냉난방','없음','기타']],
+  ['E-1-4','E','학교 교육활동 전반에서 개선되면 좋을 점을 자유롭게 적어 주세요.','공통','작년 15','','T',[]]
+];
+Q.forEach(function (q) { if (!q[6]) q[6] = 'L'; });
+
+/* 작년 교원 15문항 변경 내역: [번호, 문항, 2025 점수, 처리, 올해 코드, 이유] */
+var CHG = [
+  [1,'학교 교육과정은 교육공동체(학생·학부모·교사)의 의견을 반영하여 수립되었다.','4.70','keep','2-1-3','결대로에 교육과정 수립 과정의 의견 반영을 묻는 문항이 없어 유지'],
+  [2,'학습자의 특성과 흥미를 고려한 창의적 진로교육 프로그램을 개발하고 운영하고 있다.','4.87','same','2-1-2','강점·흥미·적성 발견 기회 · 같은 내용'],
+  [3,'학생의 올바른 인성 함양을 위한 교육과정을 꾸준히 실천하고 있다. (상호존중, 집단상담, 다문화 이해 등)','4.77','keep','1-2-3','결대로에 없는 내용 · 자율지표 5 근거로 유지'],
+  [4,'교육과정 재구성을 통해 수업 개선을 실천하고 있다.','4.60','repl','2-2-1','참여형 수업 문항으로 대체'],
+  [5,'교과 특성에 맞는 다양한 방식의 과정중심 수행평가가 운영되고 있다.','4.70','same','2-2-2','과정 중심 평가 · 같은 내용'],
+  [6,'교사가 교수·학습에 집중할 수 있는 학교 분위기가 조성되어 있다.','4.53','same','1-3-1','수업·학생지도 집중 지원 · 같은 내용'],
+  [7,'학생 의견을 수렴하고 소통하기 위한 방안이 마련되어 있다.','4.53','keep','1-1-4','결대로 교직원 문항에 학생 의견 수렴을 묻는 문항이 없어 유지'],
+  [8,'교육과정위원회, 다면평가관리위원회 등 각종 위원회가 민주적으로 구성·운영되고 있다.','4.67','repl','1-1-2','교직원 회의 자유 토론 문항으로 대체'],
+  [9,'선생님과 학생이 서로 존중하는 학교 문화가 형성되어 있다.','4.27','repl','1-2-1','구성원 간 관계 문항으로 대체'],
+  [10,'기초보충학습 프로그램이 학생의 기초학력 향상을 효과적으로 지원하고 있다.','4.73','keep','1-3-3','결대로에 없는 내용 · 자율지표 5 근거로 유지'],
+  [11,'학생 자치 활동은 학생 중심으로 활발하게 운영되고 있다.','4.53','keep','1-1-3','결대로 교직원 문항에 학생 자치를 묻는 문항이 없어 유지'],
+  [12,'올해 가장 잘 운영되었다고 생각하는 사업 (복수 선택)','선택형','opin','E-1-1','설문 끝 ‘다음 해를 위한 의견’ 단계로 이동'],
+  [13,'다음 해 생활지도에서 우선 강화가 필요한 부분 (복수 선택)','선택형','opin','E-1-2','설문 끝 ‘다음 해를 위한 의견’ 단계로 이동'],
+  [14,'다음 해 학교 교육 환경에서 개선이 필요한 부분 (복수 선택)','선택형','opin','E-1-3','설문 끝 ‘다음 해를 위한 의견’ 단계로 이동'],
+  [15,'학교 교육활동 전반에서 개선되면 좋을 점 (서술형)','서술형','opin','E-1-4','설문 끝 ‘다음 해를 위한 의견’ 단계로 이동']
+];
+var KIND = {
+  same: ['결대로 동일 문항으로 대체', 'k-same', 'var(--star)'], repl: ['결대로 유사 문항으로 대체', 'k-repl', 'var(--grow)'],
+  part: ['부분 대체', 'k-part', 'var(--warn)'], drop: ['삭제', 'k-drop', '#9ca3af'], keep: ['추가 문항으로 유지', 'k-keep', 'var(--self)'], opin: ['선택·서술 단계로 이동', 'k-opin', '#64748b']
+};
+
+function circled(n) {
+  if (n <= 20) return String.fromCharCode(0x2460 + n - 1);
+  if (n <= 35) return String.fromCharCode(0x3251 + n - 21);
+  return String.fromCharCode(0x32B1 + n - 36);
+}
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+Q.forEach(function (q, i) { q.no = circled(i + 1); q.idx = i; });
+function byCode(c) { return Q.filter(function (q) { return q[0] === c; })[0]; }
+function inArea(a) { return Q.filter(function (q) { return q[0].charAt(0) === a.k; }); }
+var LIKERT = Q.filter(function (q) { return q[6] === 'L'; });
+var SCALE = [[5,'매우 그렇다'],[4,'대체로 그렇다'],[3,'그렇다'],[2,'별로 그렇지 않다'],[1,'전혀 그렇지 않다']];
+
+/* ===== ① 응답자 화면 ===== */
+/* 직원용 문항 (작년 직원 설문 그대로 · 척도는 결대로 기준) */
+var QS = [
+  ['A-1-1','W','교직원 간에 협력하고 서로 존중하는 문화가 형성되어 있다.','3','',''],
+  ['A-1-2','W','본인의 의견이 학교 운영 과정에서 존중되고 있다고 느낀다.','3','',''],
+  ['A-1-3','W','교육과정 운영을 지원하는 체계가 효율적으로 구축되어 있다.','4','',''],
+  ['A-1-4','W','학사·행정 시스템이 교육활동을 원활히 돕는 방향으로 운영되고 있다.','4','',''],
+  ['A-1-5','W','근무 환경과 복지 수준에 만족한다.','4','',''],
+  ['B-1-1','W','교육과정 및 교육활동 지원 측면에서 잘 되고 있는 부분을 적어 주세요.','공통','','','T',[]],
+  ['B-1-2','W','교육활동 지원 과정에서 개선되면 좋을 점을 적어 주세요.','공통','','','T',[]]
+];
+QS.forEach(function (q) { if (!q[6]) q[6] = 'L'; });
+var AREAS_S = [
+  { k: 'A', ic: '🗂️', short: '학교 운영 지원', mini: '운영 지원', name: '교육활동 지원과 근무 환경에 대한 생각' },
+  { k: 'B', ic: '💬', short: '다음 해를 위한 의견', mini: '서술', name: '서술형 2문항 · 비워도 제출할 수 있어요', extra: true }
+];
+var ROLE_INFO = { T: { mins: 5 }, S: { mins: 2 }, St: { mins: 4 }, P: { mins: 5 } };
+
+/* 학생용 문항: 결대로 13 (중학교 문항 · 교육청 문구 그대로) + 추가 2 + 서술 2 */
+var QST = [
+  ['1-1-1','G','우리 학교는 학교의 일에 대해 학생들이 자신의 생각을 자유롭게 말하고 서로 의견을 나눌 수 있다.','3','',''],
+  ['1-1-2','G','우리 학교는 학생들이 직접 계획하고 주도하는 자치활동이 운영되고 있다.','2','',''],
+  ['1-2-1','G','우리 학교는 학생이 제안하는 행사나 교육활동에 대해 존중한다.','3','',''],
+  ['1-2-2','G','우리 학교는 갈등이나 문제가 발생하더라도 구성원이 협력해서 해결할 수 있다는 기대가 있다.','3','',''],
+  ['1-2-3','S','우리 학교는 선생님과 학생이 서로 존중하는 분위기가 유지되고 있다.','3','','작년 4 유지'],
+  ['1-3-1','G','나는 학교 활동을 통해 나의 강점과 흥미·적성을 발견해 가고 있다고 느낀다.','2','','작년 5 대체'],
+  ['1-3-2','S','우리 학교는 고민이 있을 때 상담하거나 도움을 요청할 수 있는 분위기가 마련되어 있다.','5','','작년 6 유지'],
+  ['2-1-1','G','우리 학교는 나의 삶이나 내가 사는 지역에 관한 활동을 한다.','1','',''],
+  ['2-1-2','G','나는 수업 시간에 책을 읽고 생각을 나누거나 글로 표현한 적이 있다.','1','',''],
+  ['2-2-1','G','우리 학교는 실생활 미래사회와 관련된 주제 탐구 활동이나 프로젝트 수업을 한다.','1','','작년 1 대체'],
+  ['2-2-2','G','우리 학교는 학생의 성장을 지원하는 과정 중심 평가를 한다.','1','','작년 2 대체'],
+  ['3-2-1','G','우리 학교 선생님들은 더 좋은 수업을 위해 고민하고 새로운 시도를 하려고 노력하신다.','1','',''],
+  ['4-1-1','G','나는 우리 학교에 다니는 것이 만족스럽다.','1','작년 7',''],
+  ['4-1-2','G','우리 학교는 내가 스스로 판단하고 행동하는 능력을 키우도록 도와준다.','1','','작년 3 부분 대체'],
+  ['4-1-3','G','우리 학교는 내가 다른 사람과 더불어 살아가는 태도를 배우도록 도와준다.','1','',''],
+  ['E-1-1','E','올해 학교에서 가장 좋았던 활동이나 프로그램을 적어 주세요.','공통','작년 8','','T',[]],
+  ['E-1-2','E','학교생활에서 더 좋아졌으면 하는 점을 적어 주세요.','공통','작년 9','','T',[]]
+];
+QST.forEach(function (q, i) { if (!q[6]) q[6] = 'L'; q.no = circled(i + 1); });
+var AREAS_ST = [
+  { k: '1', ic: '🏫', short: '우리 학교 분위기', mini: '학교 분위기', name: '학생 참여 · 존중 · 도움을 주고받는 분위기' },
+  { k: '2', ic: '📚', short: '수업과 배움', mini: '수업과 배움', name: '지역 · 독서 · 탐구 수업 · 평가' },
+  { k: '34', ic: '🌱', short: '선생님과 학교생활', mini: '학교생활', name: '선생님의 수업 노력과 학교생활 전반' },
+  { k: 'E', ic: '💬', short: '하고 싶은 말', mini: '서술', name: '서술형 2문항 · 비워도 제출할 수 있어요', extra: true }
+];
+/* 작년 학생 9문항 변경 내역: [번호, 문항, 2025 점수, 처리, 올해 코드, 이유] */
+var CHG_ST = [
+  [1,'수업에서 생각하고 참여할 기회가 충분히 주어지고 있다.','3.96','repl','2-2-1','주제 탐구·프로젝트 수업 문항으로 대체 (학생 참여형 수업)'],
+  [2,'평가 기준을 미리 안내받고, 평가가 공정하게 운영되고 있다.','3.98','repl','2-2-2','과정 중심 평가 문항으로 대체 · 공정성 의견은 서술형으로 확인'],
+  [3,'수업과 활동을 통해 실제로 배움이 있다고 느낀다.','3.89','part','4-1-2','가장 가까운 ‘스스로 판단·행동하는 능력’ 문항으로 부분 대체'],
+  [4,'선생님과 학생이 서로 존중하는 분위기가 유지되고 있다.','3.71','keep','1-2-3','작년 최저 점수 · 변화 확인 필요 (결대로 1-2-1은 ‘학생 제안 존중’으로 내용이 다름)'],
+  [5,'진로·인성·동아리·축제·체험활동 등이 내 성장에 도움이 된다.','3.92','repl','1-3-1','강점·흥미·적성 발견 문항으로 대체 · 같은 취지'],
+  [6,'고민이 있을 때 상담하거나 도움을 요청할 수 있는 분위기가 마련되어 있다.','3.91','keep','1-3-2','결대로에 상담·도움 요청 문항이 없어 유지 · 자율지표 5 근거'],
+  [7,'학교생활에 전반적으로 만족하고 있다.','3.85','same','4-1-1','학교 만족 · 같은 내용'],
+  [8,'올해 학교에서 가장 좋았던 활동이나 프로그램 (서술형)','서술형','opin','E-1-1','설문 끝 ‘하고 싶은 말’ 단계로 이동'],
+  [9,'학교생활에서 더 좋아졌으면 하는 점 (서술형)','서술형','opin','E-1-2','설문 끝 ‘하고 싶은 말’ 단계로 이동']
+];
+/* 학부모용 문항: 결대로 14 (중학교 문항 · 교육청 문구 그대로) + 추가 3 + 선택 3 + 서술 2 */
+var QP = [
+  ['1-1-1','G','우리 학교에는 학교의 일에 대해 학부모가 의견을 나눌 수 있는 통로가 마련되어 있다.','3','작년 6',''],
+  ['1-1-2','G','우리 학교는 교직원, 학생, 학부모 간 협력이 효과적으로 이루어진다.','3','','작년 9 대체'],
+  ['1-1-3','S','우리 학교는 학생의 의견을 학교 운영과 활동에 반영하려고 노력한다.','3','','작년 7 유지'],
+  ['1-2-1','G','우리 학교는 학부모가 제안하는 행사나 교육활동에 대해 존중하고 함께 만들어간다.','3','','작년 8 대체'],
+  ['1-2-2','G','우리 학교는 갈등이나 문제가 발생하더라도 구성원이 협력해서 해결할 수 있다는 기대가 있다.','3','',''],
+  ['1-2-3','S','우리 학교는 학생의 인성을 기르는 다양한 활동(상호존중 교육, 상담 프로그램, 다문화 이해 활동 등)을 운영하고 있다.','5','','작년 3 유지'],
+  ['1-3-1','G','자녀가 학교 활동을 통해 자신의 강점과 흥미·적성을 발견해 가고 있다고 느낀다.','2','','작년 2 대체'],
+  ['2-1-1','G','우리 학교는 자녀가 사는 지역을 탐구하고 이해할 수 있는 교육활동을 한다.','1','',''],
+  ['2-1-2','G','우리 학교는 교과 수업과 연결된 독서 활동을 통해 자녀의 생각하는 힘을 길러 준다.','1','',''],
+  ['2-1-3','S','우리 학교 교육과정은 교육공동체(학생·학부모·교사)의 의견을 반영해 만들어졌다.','3','','작년 1 유지'],
+  ['2-2-1','G','우리 학교는 실생활 및 미래사회와 관련된 주제 탐구 활동이나 프로젝트 수업을 한다.','1','','작년 4 대체'],
+  ['2-2-2','G','우리 아이의 학습 결과와 성장에 대해 학교로부터 피드백을 제공받고 있다.','1','','작년 5 대체'],
+  ['3-2-1','G','우리 학교 선생님들이 더 좋은 수업을 위해 노력하고 있다고 느낀다.','1','',''],
+  ['4-1-1','G','나는 내 아이가 다니는 학교(결대로자람학교)의 운영에 전반적으로 만족한다.','1','',''],
+  ['4-1-2','G','나는 우리 아이의 학교가 다른 학교와 다르게 특별하고 좋은 점이 있다고 생각한다.','1','',''],
+  ['4-1-3','G','우리 학교 교육 활동은 내 아이가 주도성을 개발하도록 도와준다.','1','',''],
+  ['4-1-4','G','우리 학교 교육 활동은 내 아이가 공동체성을 개발하도록 도와준다.','1','',''],
+  ['E-1-1','E','올해 학교 교육활동 중 가장 만족한 사업을 골라 주세요.','공통','작년 10','','M',['교수학습 활동','동아리 활동','생활지도·상담·인성','방과후학교','독서교육','진로교육','창체 활동(축제·체육한마당·현장체험학습)','봉사활동','학교 환경개선','기타']],
+  ['E-1-2','E','다음 해 생활지도에서 강화되면 좋을 부분을 골라 주세요.','4','작년 11','','M',['기본생활습관','학교폭력예방','안전교육','금연교육','기타']],
+  ['E-1-3','E','다음 해 학교 교육 환경에서 개선이 필요한 부분을 골라 주세요.','4','작년 12','','M',['화장실','식수대','급식실','교실 환경','특별실 환경','냉난방','없음','기타']],
+  ['E-1-4','E','학교 교육활동 전반에서 만족하는 점을 자유롭게 적어 주세요.','공통','작년 13','','T',[]],
+  ['E-1-5','E','학교 교육활동 전반에서 개선되면 좋을 점을 자유롭게 적어 주세요.','공통','작년 14','','T',[]]
+];
+QP.forEach(function (q, i) { if (!q[6]) q[6] = 'L'; q.no = circled(i + 1); });
+var AREAS_P = [
+  { k: '1', ic: '🤝', short: '학교와 소통·협력', mini: '소통·협력', name: '학부모 참여 · 협력 · 존중 · 자녀의 성장' },
+  { k: '2', ic: '📚', short: '교육과정과 수업', mini: '교육과정', name: '지역 · 독서 · 탐구 수업 · 학습 피드백' },
+  { k: '34', ic: '🌱', short: '선생님과 학교 운영', mini: '학교 운영', name: '선생님의 수업 노력과 학교 운영 전반' },
+  { k: 'E', ic: '💬', short: '다음 해를 위한 의견', mini: '선택·서술', name: '복수 선택 3문항 · 서술형 2문항 · 비워도 제출할 수 있어요', extra: true }
+];
+/* 작년 학부모 14문항 변경 내역 */
+var CHG_P = [
+  [1,'학교 교육과정은 교육공동체(학생·학부모·교사)의 의견을 반영해 만들어졌다.','3.89','keep','2-1-3','결대로에 교육과정 수립 과정의 의견 반영 문항이 없어 유지 (교원 설문과 같은 처리)'],
+  [2,'진로교육 프로그램이 학생의 특성과 진로 탐색에 맞게 운영되고 있다.','4.00','repl','1-3-1','자녀의 강점·흥미·적성 발견 문항으로 대체'],
+  [3,'학생의 인성을 기르는 다양한 활동이 운영되고 있다. (상호존중 교육, 상담, 다문화 이해 등)','3.89','keep','1-2-3','결대로에 없는 내용 · 자율지표 5 근거로 유지'],
+  [4,'교육과정을 재구성하여 수업 방식이 개선되고 있다.','4.00','repl','2-2-1','주제 탐구·프로젝트 수업 문항으로 대체 (교원 설문과 같은 처리)'],
+  [5,'과정중심 수행평가가 공정하고 투명하게 운영되고 있다.','4.00','repl','2-2-2','학습 결과·성장 피드백 문항으로 대체'],
+  [6,'학교는 학부모 의견을 수렴하고 소통하기 위해 노력하고 있다.','3.92','same','1-1-1','학부모 의견 통로 · 같은 내용'],
+  [7,'학교는 학생의 의견을 학교 운영과 활동에 반영하려고 노력한다.','3.95','keep','1-1-3','결대로 학부모 문항에 학생 의견 반영이 없어 유지 (교원 설문과 같은 처리)'],
+  [8,'학교운영위원회·학부모회 등이 민주적으로 운영되고 있다.','4.00','repl','1-2-1','학부모 제안 존중·함께 만들기 문항으로 대체'],
+  [9,'학교에는 선생님과 학생이 서로 존중하는 문화가 형성되어 있다.','3.95','repl','1-1-2','구성원 간 협력 문항으로 대체 (교원 설문과 같은 처리 · 문항 수 줄이기)'],
+  [10,'올해 학교교육활동 중 가장 만족한 사업 (복수 선택)','선택형','opin','E-1-1','설문 끝 ‘다음 해를 위한 의견’ 단계로 이동'],
+  [11,'생활지도에서 강화되면 좋을 부분 (복수 선택)','선택형','opin','E-1-2','설문 끝 ‘다음 해를 위한 의견’ 단계로 이동'],
+  [12,'다음 해 학교 교육환경에서 개선이 필요한 부분 (복수 선택)','선택형','opin','E-1-3','설문 끝 ‘다음 해를 위한 의견’ 단계로 이동'],
+  [13,'학교 교육활동 전반에서 만족하는 점 (서술형)','서술형','opin','E-1-4','설문 끝 ‘다음 해를 위한 의견’ 단계로 이동'],
+  [14,'학교 교육활동 전반에서 개선되면 좋을 점 (서술형)','서술형','opin','E-1-5','설문 끝 ‘다음 해를 위한 의견’ 단계로 이동']
+];
+var ROLES = {
+  P: { q: QP, a: AREAS_P, name: '학부모', h1: '학부모님, 올 한 해 어떠셨나요?', p: '보내주신 의견은 결대로자람학교 성장평가와 학교자체평가에 함께 쓰이고, 내년 교육계획에 꼭 반영하겠습니다.',
+       cls: '자녀 학년 · 반 (자녀가 여럿이면 한 자녀 기준)', lock: '🔒 응답은 익명으로 처리됩니다 · 자녀 학년·반은 참여율 확인에만 사용합니다 · 💾 자동 저장', done: '보내주신 소중한 의견은 내년 교육계획에 반영하겠습니다.' },
+  T: { q: Q, a: AREAS, name: '교원', h1: '선생님의 한 해, 어떠셨나요?', p: '결대로자람학교 성장평가와 학교자체평가에 함께 쓰이고, 다음 해 교육계획에 반영됩니다.',
+       lock: '🔒 성명은 참여 확인에만 쓰고 응답과 따로 저장해요 · 💾 답은 자동 저장돼요' },
+  S: { q: QS, a: AREAS_S, name: '직원', h1: '올 한 해, 어떠셨나요?', p: '학교자체평가에 쓰이고, 다음 해 교육계획에 반영됩니다.',
+       lock: '🔒 성명은 참여 확인에만 쓰고 응답과 따로 저장해요 · 💾 답은 자동 저장돼요' },
+  St: { q: QST, a: AREAS_ST, name: '학생', h1: '올해 우리 학교생활, 어땠나요?', p: '정답은 없어요. 솔직한 생각을 들려주면 내년 학교생활을 계획하는 데 꼭 반영할게요.',
+       cls: '학년 · 반 (이름은 쓰지 않아요)', lock: '🔒 이름은 받지 않아요 · 학년·반은 반별 참여율 확인에만 써요 · 💾 답은 자동 저장돼요' }
+};
+function fillClasses() {
+  var g = +document.getElementById('gSel').value, c = document.getElementById('cSel'), keep = c.value;
+  c.innerHTML = '<option value="">' + (g ? '반 선택' : '학년을 먼저 골라 주세요') + '</option>';
+  for (var i = 1; g && i <= CLASSES[g - 1]; i++) c.insertAdjacentHTML('beforeend', '<option>' + i + '</option>');
+  if (keep && g && +keep <= CLASSES[g - 1]) c.value = keep;
+}
+fillClasses();
+document.getElementById('gSel').addEventListener('change', function () { fillClasses(); save(); });
+document.getElementById('cSel').addEventListener('change', function () { save(); });
+function setIntro(r) {
+  var R = ROLES[r], lk = R.q.filter(function (q) { return q[6] === 'L'; }).length, ex = R.q.length - lk;
+  document.getElementById('iH1').textContent = R.h1;
+  document.getElementById('iP').textContent = R.p;
+  document.getElementById('lockTx').textContent = R.lock;
+  var anon = r === 'St' || r === 'P';
+  document.getElementById('whoBox').style.display = anon ? 'none' : 'block';
+  document.getElementById('clsBox').style.display = anon ? 'block' : 'none';
+  if (R.cls) document.getElementById('clsLbl').textContent = R.cls;
+  document.getElementById('doneTx').textContent = R.done || '보내주신 의견은 내년 교육계획에 꼭 반영할게요.';
+  document.getElementById('infoChip').textContent = '⏱ 약 ' + ROLE_INFO[r].mins + '분 · ' + lk + '문항 + ' + (r === 'St' ? '서술 ' : '선택·서술 ') + ex;
+}
+
+/* 용어 도움말 */
+var GLOSS = []; // 용어 도움말: 사용하지 않음 (선생님들이 이미 아는 용어)
+function gloss(text) {
+  var h = esc(text);
+  GLOSS.forEach(function (g, i) {
+    var k = esc(g[0]), pos = h.indexOf(k);
+    if (pos >= 0) h = h.slice(0, pos) + '<span class="term" data-g="' + i + '">' + k + '<sup>ⓘ</sup></span>' + h.slice(pos + k.length);
+  });
+  return h;
+}
+document.addEventListener('click', function (e) {
+  var tip = document.getElementById('tip');
+  var t = e.target.closest ? e.target.closest('.term') : null;
+  if (!t) { tip.classList.remove('show'); return; }
+  var g = GLOSS[+t.getAttribute('data-g')], r = t.getBoundingClientRect();
+  tip.innerHTML = '<b>' + esc(g[0]) + '</b>' + esc(g[1]);
+  tip.classList.add('show');
+  var w = Math.min(300, window.innerWidth - 24);
+  tip.style.width = w + 'px';
+  tip.style.left = Math.max(12, Math.min(r.left, window.innerWidth - w - 12)) + 'px';
+  tip.style.top = (r.bottom + 8) + 'px';
+});
+window.addEventListener('scroll', function () { document.getElementById('tip').classList.remove('show'); }, { passive: true });
+
+var answers = {}, page = -1, ROLE = 'T', RQ = Q, RAREAS = AREAS, RLIKERT = LIKERT;
+function rIn(a) { return RQ.filter(function (q) { return a.k.indexOf(q[0].charAt(0)) >= 0; }); }
+function REVIEW() { return RAREAS.length; }
+function DONE() { return RAREAS.length + 1; }
+
+function setRole(r) {
+  ROLE = r; RQ = ROLES[r].q; RAREAS = ROLES[r].a; setIntro(r);
+  RQ.forEach(function (q, i) { q.rno = circled(i + 1); q.ridx = i; });
+  RLIKERT = RQ.filter(function (q) { return q[6] === 'L'; });
+  answers = {};
+  document.querySelectorAll('.role button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-role') === r); });
+  document.querySelector('.brand .s2').textContent = '2026 학교 교육활동 만족도 조사 · ' + ROLES[r].name;
+  document.getElementById('road').innerHTML = RAREAS.map(function (a) {
+    return '<div><div class="i">' + a.ic + '</div><div class="n">' + esc(a.mini) + '</div><div class="c">' + rIn(a).length + '문항</div></div>';
+  }).join('');
+  document.getElementById('road').style.gridTemplateColumns = 'repeat(' + RAREAS.length + ', 1fr)';
+  buildPages();
+}
+
+/* 시작 화면 정보 */
+(function () {
+  var lkT = LIKERT.length, exT = Q.length - lkT;
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var days = Math.round((new Date(CFG.end + 'T00:00:00') - today) / 86400000);
+  var due = document.getElementById('dueChip');
+  if (days > 0) due.innerHTML = '📅 ' + CFG.endLabel + '까지 <b>D-' + days + '</b>';
+  else if (days === 0) due.innerHTML = '📅 <b>오늘 마감</b> · ' + CFG.endLabel;
+  else { due.innerHTML = '📅 마감 ' + CFG.endLabel + ' · <b>지금도 응답할 수 있어요</b>'; due.classList.add('late'); }
+})();
+document.querySelectorAll('.role button').forEach(function (b) {
+  b.addEventListener('click', function () { if (ROLE !== b.getAttribute('data-role')) setRole(b.getAttribute('data-role')); });
+});
+
+function buildPages() {
+  var html = '';
+  RAREAS.forEach(function (a, pi) {
+    var qs = rIn(a);
+    html += '<div class="page" data-page="' + pi + '" style="display:none">' +
+      '<div class="stage-title"><div class="ic">' + a.ic + '</div><div><div class="k">STEP ' + (pi + 1) + ' / ' + RAREAS.length + '</div><h2>' + esc(a.short) + '</h2><p>' + esc(a.name) + '</p></div></div>';
+    var prevSub = '';
+    qs.forEach(function (q) {
+      var sub = q[0].slice(0, 3);
+      if (sub !== prevSub && !a.extra && SUBS[sub]) html += '<div class="sub-ind">' + esc(sub) + ' ' + esc(SUBS[sub]) + '</div>';
+      prevSub = sub;
+      var body;
+      if (q[6] === 'L') body = '<div class="scale">' + SCALE.map(function (s) {
+          return '<button type="button" data-q="' + q.ridx + '" data-v="' + s[0] + '"><b>' + s[0] + '</b>' + s[1] + '</button>'; }).join('') + '</div>';
+      else if (q[6] === 'M') body = '<div class="opts">' + q[7].map(function (o) { return '<button type="button" class="opt">' + esc(o) + '</button>'; }).join('') + '</div>';
+      else body = '<textarea placeholder="자유롭게 적어 주세요."></textarea>';
+      var hint = q[6] === 'M' ? ' <span class="hint">복수 선택</span>' : (q[6] === 'T' ? ' <span class="hint">서술형</span>' : '');
+      html += '<div class="q" id="card-' + q.ridx + '"><div class="ck">✓</div><div class="qh"><span class="qn">' + q.rno + '</span>' +
+        '<span class="qx">' + gloss(q[2]) + hint + '<span class="code">' + esc(q[0]) + '</span></span></div>' + body + '</div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('pages').innerHTML = html;
+
+  document.querySelectorAll('.scale button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var qi = +b.getAttribute('data-q');
+      answers[qi] = +b.getAttribute('data-v');
+      b.parentNode.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
+      var card = document.getElementById('card-' + qi);
+      card.classList.add('answered'); card.classList.remove('missing'); card.classList.remove('kbd');
+      updateHeader(); save();
+    });
+  });
+  document.querySelectorAll('.opt').forEach(function (b) { b.addEventListener('click', function () { b.classList.toggle('on'); save(); }); });
+  document.querySelectorAll('.q textarea').forEach(function (t) { t.addEventListener('input', save); });
+}
+
+/* 자동 저장 / 이어서 하기 (이 기기에만) */
+var DRAFT = 'survey-staff-draft';
+function snapshot() {
+  return { role: ROLE, who: document.getElementById('who').value, g: document.getElementById('gSel').value, c: document.getElementById('cSel').value, page: page, answers: answers,
+    opts: Array.prototype.map.call(document.querySelectorAll('.opt'), function (b) { return b.classList.contains('on') ? 1 : 0; }),
+    texts: Array.prototype.map.call(document.querySelectorAll('.q textarea'), function (t) { return t.value; }) };
+}
+function save() {
+  try {
+    localStorage.setItem(DRAFT, JSON.stringify(snapshot()));
+    var s = document.getElementById('saved');
+    s.textContent = '✓ 자동 저장됨 · 창을 닫아도 이어서 할 수 있어요';
+    clearTimeout(save.tm); save.tm = setTimeout(function () { s.textContent = ''; }, 1800);
+  } catch (e) {}
+}
+function restore(d) {
+  setRole(d.role || 'T');
+  document.getElementById('who').value = d.who || '';
+  document.getElementById('gSel').value = d.g || ''; fillClasses(); document.getElementById('cSel').value = d.c || '';
+  document.querySelectorAll('#audSeg button').forEach(function (x) { x.classList.toggle('on', x.getAttribute('data-aud') === (d.role || 'T')); });
+  Object.keys(d.answers || {}).forEach(function (k) {
+    answers[k] = d.answers[k];
+    var b = document.querySelector('.scale button[data-q="' + k + '"][data-v="' + d.answers[k] + '"]');
+    if (b) { b.classList.add('on'); document.getElementById('card-' + k).classList.add('answered'); }
+  });
+  document.querySelectorAll('.opt').forEach(function (b, i) { if (d.opts && d.opts[i]) b.classList.add('on'); });
+  document.querySelectorAll('.q textarea').forEach(function (t, i) { if (d.texts && d.texts[i]) t.value = d.texts[i]; });
+  go(Math.max(0, Math.min(d.page, RAREAS.length - 1)));
+}
+function checkDraft() {
+  var d = null;
+  try { d = JSON.parse(localStorage.getItem(DRAFT) || 'null'); } catch (e) {}
+  if (!d || !d.answers || !Object.keys(d.answers).length) return;
+  var box = document.getElementById('resume');
+  box.innerHTML = '작성하던 설문이 있어요 (' + (ROLES[d.role] || ROLES.T).name + ') · <b>' + Object.keys(d.answers).length + '문항</b> 응답함<br>' +
+    '<button class="go" type="button">이어서 하기</button><button class="new" type="button">처음부터</button>';
+  box.style.display = 'block';
+  box.querySelector('.go').addEventListener('click', function () { restore(d); });
+  box.querySelector('.new').addEventListener('click', function () { try { localStorage.removeItem(DRAFT); } catch (e) {} box.style.display = 'none'; });
+}
+
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast.tm); toast.tm = setTimeout(function () { t.classList.remove('show'); }, 2200);
+}
+
+function go(p) {
+  page = p;
+  var inStage = p >= 0 && p < RAREAS.length;
+  document.getElementById('introPage').style.display = p === -1 ? 'block' : 'none';
+  document.getElementById('reviewPage').style.display = p === REVIEW() ? 'block' : 'none';
+  document.getElementById('donePage').style.display = p === DONE() ? 'block' : 'none';
+  document.getElementById('pages').style.display = inStage ? 'block' : 'none';
+  document.querySelectorAll('.page').forEach(function (el) { el.style.display = (+el.getAttribute('data-page') === p) ? 'block' : 'none'; });
+  document.getElementById('hdr').style.display = inStage ? 'block' : 'none';
+  document.getElementById('cta').style.display = p === DONE() ? 'none' : 'block';
+  document.getElementById('btnPrev').style.display = p >= 0 ? 'block' : 'none';
+  document.getElementById('btnNext').textContent = p === -1 ? '시작하기'
+    : p === REVIEW() ? '제출하기'
+    : p === RAREAS.length - 1 ? '다음 · 마지막 확인 →'
+    : '다음 · ' + RAREAS[p + 1].mini + ' →';
+  if (p === REVIEW()) buildReview();
+  if (p === DONE()) { try { localStorage.removeItem(DRAFT); } catch (e) {} }
+  else if (p >= 0) save();
+  updateHeader(); fitAll();
+  window.scrollTo({ top: 0 });
+}
+
+function updateHeader() {
+  if (page < 0 || page >= RAREAS.length) return;
+  var a = RAREAS[page], lk = rIn(a).filter(function (q) { return q[6] === 'L'; });
+  var doneHere = lk.filter(function (q) { return answers[q.ridx]; }).length;
+  var left = RLIKERT.filter(function (q) { return !answers[q.ridx]; }).length;
+  var mins = Math.max(1, Math.ceil((left * 12 + 60) / 60));
+  document.getElementById('hNo').textContent = page + 1;
+  document.getElementById('hT1').textContent = a.short;
+  document.getElementById('hT2').textContent = a.name;
+  document.getElementById('hCnt').innerHTML = (a.extra ? '선택 응답 · ' + rIn(a).length + '문항' : '<b>' + doneHere + '</b> / ' + lk.length) +
+    '<span style="font-size:11px;font-weight:600;color:var(--faint)"> · 약 ' + mins + '분</span>';
+  document.getElementById('hSegs').innerHTML = RAREAS.map(function (x, i) {
+    var l = rIn(x).filter(function (q) { return q[6] === 'L'; });
+    var w = i < page ? 100 : (i > page ? 0 : (l.length ? l.filter(function (q) { return answers[q.ridx]; }).length / l.length * 100 : 30));
+    return '<span title="' + esc(x.short) + '"><i style="width:' + w + '%"></i></span>';
+  }).join('');
+}
+
+/* 제출 전 한눈에 보기 */
+function buildReview() {
+  var h = '<div class="stage-title"><div class="ic">📋</div><div><div class="k">마지막 확인</div><h2>제출 전에 한 번 확인해 주세요</h2><p>고치고 싶은 문항을 누르면 그 문항으로 이동해요.</p></div></div>';
+  RAREAS.forEach(function (a, pi) {
+    h += '<div class="rv"><div class="rvh">' + a.ic + ' ' + esc(a.short) + '</div>';
+    rIn(a).forEach(function (q) {
+      var val;
+      if (q[6] === 'L') {
+        var v = answers[q.ridx];
+        val = v ? '<span class="rvv">' + v + ' · ' + SCALE[5 - v][1] + '</span>' : '<span class="rvv no">미응답</span>';
+      } else if (q[6] === 'M') {
+        var sel = Array.prototype.map.call(document.querySelectorAll('#card-' + q.ridx + ' .opt.on'), function (b) { return b.textContent; });
+        val = sel.length ? '<span class="rvv m">' + esc(sel.join(', ')) + '</span>' : '<span class="rvv no">선택 안 함</span>';
+      } else {
+        var t = document.querySelector('#card-' + q.ridx + ' textarea').value.trim();
+        val = t ? '<span class="rvv m">' + esc(t.length > 30 ? t.slice(0, 30) + '…' : t) + '</span>' : '<span class="rvv no">작성 안 함</span>';
+      }
+      h += '<button type="button" class="rvi" data-p="' + pi + '" data-q="' + q.ridx + '"><span class="rvn">' + q.rno + '</span><span class="rvt">' + esc(q[2]) + '</span>' + val + '</button>';
+    });
+    h += '</div>';
+  });
+  var el = document.getElementById('reviewPage');
+  el.innerHTML = h;
+  el.querySelectorAll('.rvi').forEach(function (b) {
+    b.addEventListener('click', function () {
+      go(+b.getAttribute('data-p'));
+      var card = document.getElementById('card-' + b.getAttribute('data-q'));
+      setTimeout(function () { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); card.classList.add('flash');
+        setTimeout(function () { card.classList.remove('flash'); }, 1400); }, 80);
+    });
+  });
+}
+
+document.getElementById('btnNext').addEventListener('click', function () {
+  if (page === -1) {
+    if (ROLE === 'St' || ROLE === 'P') {
+      if (!document.getElementById('gSel').value) { toast('학년을 골라 주세요'); document.getElementById('gSel').focus(); return; }
+      if (!document.getElementById('cSel').value) { toast('반을 골라 주세요'); document.getElementById('cSel').focus(); return; }
+    } else if (!document.getElementById('who').value.trim()) { toast('성명을 입력해 주세요'); document.getElementById('who').focus(); return; }
+    go(0); return;
+  }
+  if (page === REVIEW()) { go(DONE()); return; }
+  var miss = rIn(RAREAS[page]).filter(function (q) { return q[6] === 'L' && !answers[q.ridx]; });
+  if (miss.length) {
+    miss.forEach(function (q) { document.getElementById('card-' + q.ridx).classList.add('missing'); });
+    toast(miss.map(function (q) { return q.rno; }).join(' ') + ' 문항이 비어 있어요');
+    document.getElementById('card-' + miss[0].ridx).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  go(page + 1);
+});
+document.getElementById('btnPrev').addEventListener('click', function () { go(page - 1); });
+
+/* PC 숫자키 1~5: 지금 단계에서 아직 답하지 않은 첫 문항에 입력 */
+document.addEventListener('keydown', function (e) {
+  if (page < 0 || page >= RAREAS.length || e.ctrlKey || e.altKey || e.metaKey) return;
+  var tag = (e.target.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+  if (!/^[1-5]$/.test(e.key)) return;
+  var qs = rIn(RAREAS[page]).filter(function (q) { return q[6] === 'L' && !answers[q.ridx]; });
+  if (!qs.length) return;
+  e.preventDefault();
+  document.querySelector('.scale button[data-q="' + qs[0].ridx + '"][data-v="' + e.key + '"]').click();
+  if (qs[1]) { var nx = document.getElementById('card-' + qs[1].ridx); nx.classList.add('kbd'); nx.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+});
+
+/* 문항 한 줄 맞추기 (휴대폰처럼 좁으면 두 줄 허용) */
+function fitAll() {
+  var fs = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs')) || 1;
+  var narrow = window.innerWidth <= 560;
+  var max = 16 * fs, min = 12.5;
+  document.querySelectorAll('.page').forEach(function (pg) {
+    if (pg.style.display === 'none') return;
+    pg.querySelectorAll('.qx').forEach(function (el) {
+      el.classList.remove('wrapok');
+      if (narrow) { el.classList.add('wrapok'); el.style.fontSize = (15 * fs) + 'px'; return; }
+      var s = max; el.style.fontSize = s + 'px';
+      while (el.scrollWidth > el.clientWidth + 1 && s > min) { s -= 0.5; el.style.fontSize = s + 'px'; }
+      if (el.scrollWidth > el.clientWidth + 1) { el.classList.add('wrapok'); el.style.fontSize = Math.max(min, 14.5 * fs) + 'px'; }
+    });
+  });
+}
+window.addEventListener('resize', function () { fitAll(); placeSticky(); });
+
+document.querySelectorAll('.fsctl button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    document.documentElement.style.setProperty('--fs', b.getAttribute('data-fs'));
+    document.querySelectorAll('.fsctl button').forEach(function (x) { x.classList.toggle('on', x === b); });
+    try { localStorage.setItem('survey-fs', b.getAttribute('data-fs')); } catch (e) {}
+    fitAll();
+  });
+});
+try { var sfs = localStorage.getItem('survey-fs'); if (sfs) { var fb = document.querySelector('.fsctl button[data-fs="' + sfs + '"]'); if (fb) fb.click(); } } catch (e) {}
+
+document.getElementById('indToggle').addEventListener('change', function (e) {
+  document.getElementById('v-form').classList.toggle('show-ind', e.target.checked); fitAll();
+});
+
+var AC = ['ac-indigo', 'ac-violet', 'ac-emerald', 'ac-coral', 'ac-black'];
+function setAccent(v) { var f = document.getElementById('v-form'); AC.forEach(function (c) { f.classList.remove(c); }); if (v) f.classList.add(v); }
+document.getElementById('acSel').addEventListener('change', function (e) {
+  setAccent(e.target.value); try { localStorage.setItem('survey-ac2', e.target.value); } catch (err) {}
+});
+try { var sac = localStorage.getItem('survey-ac2'); if (sac) { document.getElementById('acSel').value = sac; setAccent(sac); } } catch (e) {}
+
+function placeSticky() { document.getElementById('hdr').style.top = document.querySelector('.viewtabs').offsetHeight + 'px'; }
+
+/* ===== ② 보고서용 ===== */
+function buildReport(aud) {
+  aud = aud || 'T';
+  var A = AUD[aud], Q = A.q, CHG = A.chg, AR = ROLES[aud].a, EA = AR[AR.length - 1];
+  var SELF_CODES = []; CHG.forEach(function (c) { if (c[3] !== 'drop' && SELF_CODES.indexOf(c[4]) < 0) SELF_CODES.push(c[4]); });
+  ['T', 'St', 'P'].forEach(function (k) {
+    var g = AUD[k].q.filter(function (q) { return q[1] === 'G'; }).length;
+    document.getElementById('rp' + k).textContent = AUD[k].q.length + '문항 · 결대로 ' + g + ' · 자체평가 ' + AUD[k].chg.length;
+  });
+  document.getElementById('repH2').textContent = '문항별 정리표 (' + A.name + ' 설문 순서)';
+  document.getElementById('nGrow').textContent = Q.filter(function (q) { return q[1] === 'G'; }).length + '문항';
+  document.getElementById('nSelf').textContent = SELF_CODES.length + '문항';
+  var html = '<tr><th>설문 번호</th><th>코드</th><th>문항</th><th>출처</th><th>결대로<br>보고서</th><th>자체평가<br>보고서</th><th class="hide-sm">비고</th></tr>';
+  var prev = '';
+  Q.forEach(function (q) {
+    var sub = q[0].slice(0, 3);
+    if (sub !== prev) html += '<tr class="grp"><td colspan="7">' + (q[1] === 'E' ? AR.length + '단계 · ' + esc(EA.short) + (Q.some(function (x) { return x[6] === 'M'; }) ? ' (선택형·서술형)' : ' (서술형)') : esc(sub) + ' ' + esc(SUBS[sub])) + '</td></tr>';
+    prev = sub;
+    var isG = q[1] === 'G';
+    html += '<tr class="' + (isG ? '' : 'added') + '"><td class="c" style="font-size:18px;font-weight:800;color:var(--navy)">' + q.no + '</td>' +
+      '<td class="c">' + esc(q[0]) + '</td><td>' + esc(q[2]) + (q[6] === 'M' ? ' <small>(복수)</small>' : q[6] === 'T' ? ' <small>(서술)</small>' : '') + '</td>' +
+      '<td class="c">' + (isG ? '<span class="bdg grow">결대로</span>' : '<span class="bdg self">' + (q[1] === 'E' ? '선택·서술' : '추가') + '</span>') + '</td>' +
+      '<td class="c">' + (isG ? '<span class="ok">✓</span>' : '<span class="no">—</span>') + '</td>' +
+      (function () { var last = CHG.filter(function (c) { return c[4] === q[0] && c[3] !== 'drop'; }).map(function (c) { return c[0]; }); return '<td class="c">' + (last.length ? '<span class="ok2">✓</span><br><small>작년 ' + last.join('·') + '번</small>' : '<span class="no">—</span>') + '</td>'; })() +
+      '<td class="hide-sm">' + (q[4] ? '<span class="bdg star">★ ' + esc(q[4]) + ' 동일</span> ' : '') + (q[5] ? '<small>' + esc(q[5]) + '</small>' : '') + '</td></tr>';
+  });
+  document.getElementById('repTable').innerHTML = html;
+}
+
+/* ===== ③ 변경 내역 (부장님 보고용) ===== */
+var ORDER = ['same', 'repl', 'part', 'keep', 'opin', 'drop'];
+var AUD = {
+  T: { name: '교직원', q: Q, chg: CHG, sep: 34, oldT: '2025 자체평가 (교원)', newT: '2026 통합 설문 (교원)', nE: '선택·서술',
+       eff: [['직원 설문', '결대로 교직원 문항이 교사 중심이라 직원용은 별도 검토 중 (보류)'],
+             ['응답 척도 통일', '결대로 기준으로 통일 (3점: 작년 ‘보통이다’ → 올해 ‘그렇다’) · 비교 시 참고'],
+             ['보고서 작성 간소화', '결대로 보고서는 19문항, 자체평가 보고서는 작년 15문항에 대응하는 2026 문항으로 작성']] },
+  St: { name: '학생', q: QST, chg: CHG_ST, sep: 22, oldT: '2025 자체평가 (학생)', newT: '2026 통합 설문 (학생)', nE: '서술',
+       eff: [['응답 척도 통일', '결대로 기준으로 통일 (3점: 작년 ‘보통이다’ → 올해 ‘그렇다’) · 비교 시 참고'],
+             ['이름 대신 학년·반', '이름은 받지 않고 학년·반만 받아 반별 참여율만 확인 → 솔직한 응답'],
+             ['보고서 작성 간소화', '결대로 보고서는 13문항, 자체평가 보고서는 작년 9문항에 대응하는 2026 문항으로 작성']] },
+  P: { name: '학부모', q: QP, chg: CHG_P, sep: 28, oldT: '2025 자체평가 (학부모)', newT: '2026 통합 설문 (학부모)', nE: '선택·서술',
+       eff: [['응답 척도 통일', '결대로 기준으로 통일 (3점: 작년 ‘보통이다’ → 올해 ‘그렇다’) · 비교 시 참고'],
+             ['이름 대신 자녀 학년·반', '이름은 받지 않고 자녀 학년·반만 받아 반별 참여율만 확인'],
+             ['보고서 작성 간소화', '결대로 보고서는 14문항, 자체평가 보고서는 작년 14문항에 대응하는 2026 문항으로 작성']] }
+};
+var CUR_AUD = 'T';
+document.getElementById('chgTabs').addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b) return;
+  document.querySelectorAll('#chgTabs button').forEach(function (x) { x.classList.toggle('on', x === b); });
+  var a = b.getAttribute('data-aud');
+  document.getElementById('chgPend').style.display = AUD[a] ? 'none' : 'block';
+  document.getElementById('chgBody').style.display = AUD[a] ? 'block' : 'none';
+  if (AUD[a]) buildChange(a);
+});
+function buildChange(aud) {
+  aud = aud || CUR_AUD; CUR_AUD = aud;
+  var A = AUD[aud], Q = A.q, CHG = A.chg;
+  function byCode(c) { return Q.filter(function (q) { return q[0] === c; })[0]; }
+  ['T', 'St', 'P'].forEach(function (k) { document.getElementById('ct' + k).textContent = AUD[k].sep + ' → ' + AUD[k].q.length + '문항'; });
+  document.getElementById('audNm').textContent = A.name;
+  document.getElementById('nGfix').textContent = Q.filter(function (q) { return q[1] === 'G'; }).length;
+  document.getElementById('dOld').textContent = A.sep;
+  document.querySelectorAll('.dOldN').forEach(function (el) { el.textContent = CHG.length; });
+  document.getElementById('btOld').textContent = A.oldT;
+  document.getElementById('btNew').textContent = A.newT;
+  document.getElementById('chgNote').innerHTML = A.note ? '<div class="chk-note">' + A.note + '</div>' : '';
+  document.getElementById('effects').innerHTML = A.eff.map(function (e) { return '<div><b>' + esc(e[0]) + '</b><span>' + esc(e[1]) + '</span></div>'; }).join('');
+  var nKeep = Q.filter(function (q) { return q[1] === 'S'; }).length;
+  var nG = Q.filter(function (q) { return q[1] === 'G'; }).length;
+  var nE = Q.filter(function (q) { return q[1] === 'E'; }).length;
+  document.getElementById('dNew').textContent = Q.length;
+  document.getElementById('dNew2').textContent = Q.length;
+  document.getElementById('dCut').textContent = '−' + (A.sep - Q.length);
+
+  document.getElementById('stackOld').innerHTML = ORDER.map(function (k) {
+    var n = CHG.filter(function (c) { return c[3] === k; }).length;
+    return n ? '<span class="' + KIND[k][1] + '" style="flex:' + n + '">' + n + '</span>' : '';
+  }).join('');
+  document.getElementById('flowLegend').innerHTML = ORDER.map(function (k) {
+    var n = CHG.filter(function (c) { return c[3] === k; }).length;
+    return n ? '<span><i class="' + KIND[k][1] + '"></i>' + KIND[k][0] + ' ' + n + '</span>' : '';
+  }).join('');
+  document.getElementById('stackNew').innerHTML =
+    '<span style="flex:' + nG + ';background:var(--grow)">결대로 ' + nG + '</span>' +
+    '<span style="flex:' + nKeep + ';background:var(--self)">' + nKeep + '</span>' +
+    '<span style="flex:' + nE + ';background:#64748b">' + nE + '</span>';
+  document.getElementById('newLegend').innerHTML =
+    '<span><i style="background:var(--grow)"></i>결대로 필수 ' + nG + '</span>' +
+    '<span><i style="background:var(--self)"></i>자체평가 추가 ' + nKeep + '</span>' +
+    '<span><i style="background:#64748b"></i>' + A.nE + ' ' + nE + '</span>';
+
+  var html = '<tr><th>작년</th><th>2025 문항</th><th>2025<br>점수</th><th>처리</th><th>2026 문항</th><th class="hide-sm">사유</th></tr>';
+  CHG.forEach(function (c) {
+    var k = KIND[c[3]], t = byCode(c[4]);
+    html += '<tr><td class="c"><b>' + c[0] + '</b></td><td>' + esc(c[1]) + '</td><td class="num">' + esc(c[2]) + '</td>' +
+      '<td class="c"><span class="tagk ' + k[1] + '">' + k[0] + '</span></td>' +
+      '<td>' + (t ? '<b style="color:var(--navy)">' + t.no + '</b> <small style="color:var(--sub)">' + esc(c[4]) + '</small><br>' + esc(t[2]) : '<span style="color:var(--faint)">— (자체평가 문항에서 제외)</span>') + '</td>' +
+      '<td class="hide-sm" style="font-size:12.5px;color:var(--sub)">' + esc(c[5]) + '</td></tr>';
+  });
+  document.getElementById('chgTable').innerHTML = html;
+}
+
+/* ===== ④ 결과 대시보드 ===== */
+function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+var DEMO = { T: { n: 26, seed: 2026, cut: [0.66, 0.88, 0.97, 2] }, St: { seed: 7, cut: [0.48, 0.70, 0.88, 0.95] }, P: { seed: 11, cut: [0.55, 0.78, 0.92, 0.97] } };
+var N = 42, RESP = [], DASH_AUD = 'T';
+function demoResp(aud, n) {
+  var R = rng(DEMO[aud].seed), c = DEMO[aud].cut, out = [];
+  var lk = AUD[aud].q.filter(function (q) { return q[6] === 'L'; });
+  for (var r = 0; r < n; r++) {
+    var row = {};
+    lk.forEach(function (q, i) { var x = R() + (i % 5) * 0.03, v = x < c[0] ? 5 : x < c[1] ? 4 : x < c[2] ? 3 : x < c[3] ? 2 : 1; row[q[0]] = v; });
+    out.push(row);
+  }
+  return out;
+}
+var OPT_ALL = {
+  T: { 'E-1-1': [18,5,14,6,3,11,29,2,10,1], 'E-1-2': [39,22,7,8,1], 'E-1-3': [35,6,2,8,6,1,2,1] },
+  P: { 'E-1-1': [40,22,28,15,12,35,60,6,14,3], 'E-1-2': [55,48,30,20,4], 'E-1-3': [70,12,20,25,10,18,9,3] }
+};
+var TEXT_ALL = {
+  T: { 'E-1-4': ['행사 준비 기간이 길어 수업 운영에 부담이 있어요. 일정 조정이 필요해요.', '화장실 노후화 개선이 시급해요.', '학년 초 공동 생활지도 기준을 함께 정하면 좋겠어요.', '전학공 시간이 정례화되어 좋았어요. 내년에도 유지되었으면 합니다.'] },
+  St: { 'E-1-1': ['현장체험학습이 제일 재미있었어요.', '진로캠프에서 직업 체험한 게 기억에 남아요.', '청학제 준비하면서 반 친구들이랑 친해졌어요.'],
+        'E-1-2': ['화장실이 더 깨끗했으면 좋겠어요.', '자율 동아리가 더 많아졌으면 해요.', '반 대항 체육 활동이 더 있었으면 좋겠어요.'] },
+  P: { 'E-1-4': ['담임 선생님이 아이 이야기를 잘 들어 주셔서 감사해요.', '진로 체험 프로그램이 다양해서 좋았습니다.'],
+       'E-1-5': ['화장실 시설 개선을 부탁드립니다.', '가정통신문 외에 다양한 소통 방법이 있으면 좋겠어요.', '다문화 가정과 소통할 기회가 더 늘었으면 합니다.'] }
+};
+function stats(code) {
+  var xs = RESP.map(function (r) { return r[code]; }).filter(function (v) { return v; });
+  var n = xs.length, m = xs.reduce(function (a, b) { return a + b; }, 0) / n;
+  var sd = Math.sqrt(xs.reduce(function (a, b) { return a + (b - m) * (b - m); }, 0) / n);
+  var cnt = [5, 4, 3, 2, 1].map(function (v) { return xs.filter(function (x) { return x === v; }).length; });
+  return { n: n, m: m, sd: sd, cnt: cnt };
+}
+function f2(x) { return x.toFixed(2); }
+function avg(a) { return a.reduce(function (x, y) { return x + y; }, 0) / a.length; }
+function distCells(s) {
+  return s.cnt.map(function (c, i) { return '<td class="num d' + (5 - i) + (c ? '' : ' z') + '">' + c + '</td>'; }).join('');
+}
+function distBar(s) {
+  return '<div class="mbar">' + s.cnt.map(function (c, i) { return c ? '<i class="d' + (5 - i) + '" style="flex:' + c + '"></i>' : ''; }).join('') + '</div>';
+}
+function diffHtml(now, prev) {
+  var d = now - prev, cls = d > 0.005 ? 'up' : d < -0.005 ? 'down' : 'eq';
+  return '<span class="diff ' + cls + '">' + (d > 0.005 ? '▲' : d < -0.005 ? '▼' : '') + f2(Math.abs(d)) + '</span>';
+}
+
+/* 자체평가 보고서에 쓰는 문항 = 작년 15문항과 연결된 올해 문항 */
+var SELF_CODES = [];
+CHG.forEach(function (c) { if (c[3] !== 'drop' && SELF_CODES.indexOf(c[4]) < 0) SELF_CODES.push(c[4]); });
+var SELF_LIKERT = LIKERT.filter(function (q) { return SELF_CODES.indexOf(q[0]) >= 0; });
+
+function buildDash(aud) {
+  aud = aud || DASH_AUD; DASH_AUD = aud;
+  var A = AUD[aud], Q = A.q, CHG = A.chg;
+  var LIKERT = Q.filter(function (q) { return q[6] === 'L'; });
+  function byCode(c) { return Q.filter(function (q) { return q[0] === c; })[0]; }
+  var SELF_CODES = []; CHG.forEach(function (c) { if (c[3] !== 'drop' && SELF_CODES.indexOf(c[4]) < 0) SELF_CODES.push(c[4]); });
+  var SELF_LIKERT = LIKERT.filter(function (q) { return SELF_CODES.indexOf(q[0]) >= 0; });
+  var OPT_COUNTS = OPT_ALL[aud] || {}, TEXTS = TEXT_ALL[aud] || {};
+  document.getElementById('tboard').style.display = aud === 'T' ? 'block' : 'none';
+  document.getElementById('cboard').style.display = aud === 'T' ? 'none' : 'block';
+  N = aud === 'T' ? DEMO.T.n : buildClassBoard(aud);
+  RESP = demoResp(aud, N);
+  ['T', 'St', 'P'].forEach(function (k) {
+    var g = AUD[k].q.filter(function (q) { return q[1] === 'G'; }).length;
+    document.getElementById('dt' + k).textContent = '결대로 ' + g + ' · 자체평가 ' + AUD[k].chg.length;
+  });
+  var G = Q.filter(function (q) { return q[1] === 'G'; });
+  document.getElementById('rtG').textContent = '결대로 ' + G.length + '문항 · 붙임1·붙임3 양식 그대로';
+  document.getElementById('rtS').textContent = '작년 ' + CHG.length + '문항에 대응하는 2026 문항 · 2025와 비교';
+  document.getElementById('h3Self').textContent = '자체평가 ' + CHG.length + '문항 결과 · 작년 문항 대응 (2025 비교)';
+  var indAvg = {};
+  ['1','2','3','4','5'].forEach(function (k) {
+    var qs = SELF_LIKERT.filter(function (q) { return q[3] === k; });
+    indAvg[k] = { m: qs.length ? avg(qs.map(function (q) { return stats(q[0]).m; })) : 0, n: qs.length, qs: qs };
+  });
+  document.getElementById('kpis').innerHTML =
+    '<div class="kpi"><div class="l">응답 ' + ({ T: '교원', St: '학생', P: '학부모' })[aud] + '</div><div class="v">' + N + '<small>명</small></div></div>' +
+    '<div class="kpi"><div class="l">전체 평균 (' + LIKERT.length + '문항)</div><div class="v">' + f2(avg(LIKERT.map(function (q) { return stats(q[0]).m; }))) + '</div></div>' +
+    '<div class="kpi"><div class="l">결대로 ' + G.length + '문항 평균</div><div class="v" style="color:var(--grow)">' + f2(avg(G.map(function (q) { return stats(q[0]).m; }))) + '</div></div>' +
+    '<div class="kpi"><div class="l">자체평가 ' + SELF_CODES.length + '문항 평균</div><div class="v" style="color:var(--self)">' + f2(avg(SELF_LIKERT.map(function (q) { return stats(q[0]).m; }))) + '</div></div>';
+
+  /* 결대로 보고서 */
+  var areaNames = { '1': '1. 학교문화', '2': '2. 교육과정', '3': '3. 전학공', '4': '4. 운영 전반' };
+  var total = 0;
+  document.getElementById('growSum').innerHTML = Object.keys(areaNames).map(function (k) {
+    var ms = G.filter(function (q) { return q[0].charAt(0) === k; }).map(function (q) { return stats(q[0]).m; });
+    var sum = ms.reduce(function (a, b) { return a + b; }, 0); total += sum;
+    return '<div><div class="a">' + areaNames[k] + '</div><div class="b">' + f2(sum) + '</div><div class="c">평균 ' + f2(avg(ms)) + ' · ' + ms.length + '문항</div></div>';
+  }).join('') + '<div><div class="a">전체</div><div class="b">' + f2(total) + '</div><div class="c">응답자 ' + N + '명</div></div>';
+
+  var html = '<tr><th>영역</th><th>번호</th><th>문항</th><th>5</th><th>4</th><th>3</th><th>2</th><th>1</th><th>응답</th><th>평균</th><th>표준<br>편차</th></tr>';
+  var prevA = '';
+  G.forEach(function (q) {
+    var s = stats(q[0]), a = q[0].charAt(0);
+    html += '<tr><td style="white-space:nowrap">' + (a !== prevA ? '<b>' + areaNames[a] + '</b>' : '') + '</td><td class="c">' + esc(q[0]) + '</td>' +
+      '<td>' + esc(q[2]) + distBar(s) + '</td>' + distCells(s) + '<td class="num">' + s.n + '</td><td class="num">' + f2(s.m) + '</td><td class="num">' + f2(s.sd) + '</td></tr>';
+    prevA = a;
+  });
+  document.getElementById('growTbl').innerHTML = html;
+
+  /* 자체평가 보고서: 자율지표 카드 */
+  var sumRows = '<tr><th>자율지표</th><th>문항 수</th><th>평균</th></tr>';
+  document.getElementById('selfCards').innerHTML = ['1','2','3','4','5'].map(function (k) {
+    var x = indAvg[k];
+    sumRows += '<tr><td>' + k + '. ' + esc(SELF_IND[k]) + '</td><td>' + x.n + '</td><td>' + (x.n ? f2(x.m) : '선택형 참고') + '</td></tr>';
+    if (!x.n) return '<div class="icard"><div class="ih"><b>' + k + '</b><span class="iv" style="color:var(--faint)">—</span></div>' +
+      '<div class="in">' + esc(SELF_IND[k]) + '</div><div class="meter"><i style="width:0"></i></div><div class="iq">척도 문항 없음 · 선택형 결과 참고</div></div>';
+    return '<div class="icard"><div class="ih"><b>' + k + '</b><span class="iv">' + f2(x.m) + '</span></div>' +
+      '<div class="in">' + esc(SELF_IND[k]) + '</div><div class="meter"><i style="width:' + (x.m / 5 * 100) + '%"></i></div>' +
+      '<div class="iq">' + x.qs.map(function (q) { return q.no; }).join(' ') + ' · ' + x.n + '문항</div></div>';
+  }).join('');
+  document.getElementById('selfSum').innerHTML = sumRows;
+
+  /* 자체평가 보고서: 작년 15문항 표 */
+  var t = '<tr><th>작년<br>번호</th><th>2026 문항 (보고서용)</th><th>설문<br>번호</th><th>5</th><th>4</th><th>3</th><th>2</th><th>1</th><th>2026<br>평균</th><th>2025<br>점수</th><th>변화</th></tr>';
+  CHG.forEach(function (c) {
+    if (c[3] === 'drop') return;
+    var q = byCode(c[4]);
+    if (q[6] !== 'L') {
+      t += '<tr class="added"><td class="c"><b>' + c[0] + '</b></td><td>' + esc(q[2]) + '<div class="was">2025: ' + esc(c[1]) + '</div></td><td class="c">' + q.no + '</td>' +
+        '<td colspan="8" style="color:var(--sub);font-size:12.5px">' + (q[6] === 'M' ? '선택형 → 아래 그래프' : '서술형 → 아래 의견 목록') + '</td></tr>';
+      return;
+    }
+    var s = stats(c[4]), prev = parseFloat(c[2]);
+    var same = CHG.filter(function (x) { return x[4] === c[4] && x[0] !== c[0]; }).map(function (x) { return x[0]; });
+    t += '<tr><td class="c"><b>' + c[0] + '</b></td><td>' + esc(q[2]) +
+      (same.length ? ' <span class="bdg" style="background:#f1f5f9;color:#64748b">' + same.join('·') + '번과 같은 문항</span>' : '') +
+      '<div class="was">2025: ' + esc(c[1]) + '</div>' + distBar(s) + '</td>' +
+      '<td class="c"><b style="color:var(--navy)">' + q.no + '</b><br><small style="color:var(--sub)">' + esc(c[4]) + '</small></td>' +
+      distCells(s) + '<td class="num">' + f2(s.m) + '</td><td class="num" style="color:var(--sub)">' + f2(prev) + '</td><td class="num">' + diffHtml(s.m, prev) + '</td></tr>';
+  });
+  document.getElementById('self15').innerHTML = t;
+
+  var MQ = Q.filter(function (q) { return q[6] === 'M'; });
+  document.getElementById('tOpt').style.display = MQ.length ? 'flex' : 'none';
+  document.getElementById('selfOpts').innerHTML = MQ.map(function (q) {
+    var c = OPT_COUNTS[q[0]];
+    var order = q[7].map(function (o, i) { return [o, c[i]]; }).sort(function (a, b) { return b[1] - a[1]; });
+    var lastNo = CHG.filter(function (x) { return x[4] === q[0]; })[0][0];
+    return '<div class="ind"><div style="font-weight:800;margin-bottom:6px">' + lastNo + '번 · ' + esc(q[2]) + '</div><div class="bars">' +
+      order.map(function (o) { var p = o[1] / N * 100; return '<div class="row"><span>' + esc(o[0]) + '</span><div class="bar"><i style="width:' + p + '%"></i></div><span class="pct">' + o[1] + '명 ' + Math.round(p) + '%</span></div>'; }).join('') +
+      '</div></div>';
+  }).join('');
+  document.getElementById('selfTexts').innerHTML = Q.filter(function (q) { return q[6] === 'T'; }).map(function (q) {
+    var lastNo = CHG.filter(function (x) { return x[4] === q[0]; })[0][0];
+    return '<div class="txq">' + lastNo + '번 · ' + esc(q[2]) + '</div><ul class="texts">' + (TEXTS[q[0]] || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+  }).join('');
+}
+
+/* ===== 학생·학부모 참여 현황 (반별 · 예시) ===== */
+function ringHtml(pct) {
+  var C = 2 * Math.PI * 40;
+  return '<svg viewBox="0 0 92 92"><circle cx="46" cy="46" r="40" fill="none" stroke="#eef1f5" stroke-width="9"/>' +
+    '<circle cx="46" cy="46" r="40" fill="none" stroke="var(--self)" stroke-width="9" stroke-linecap="round" stroke-dasharray="' + (C * pct) + ' ' + C + '"/></svg>' +
+    '<div class="lbl"><b>' + Math.round(pct * 100) + '%</b><span>참여율</span></div>';
+}
+function buildClassBoard(aud) {
+  var R = rng(aud === 'St' ? 5 : 9), tot = 0, done = 0, low = [], rows = '';
+  CLASSES.forEach(function (nc, gi) {
+    rows += '<div class="cg-row"><span class="g">' + (gi + 1) + '학년</span>';
+    for (var c = 1; c <= nc; c++) {
+      var sz = classSize(gi, c), d = Math.round(sz * (aud === 'St' ? 0.55 + R() * 0.45 : 0.12 + R() * 0.45)), pc = d / sz;
+      tot += sz; done += d;
+      if (pc < 0.5) low.push((gi + 1) + '-' + c + ' (' + Math.round(pc * 100) + '%)');
+      rows += '<div class="cc' + (pc < 0.5 ? ' low' : '') + '">' + c + '반 <b>' + Math.round(pc * 100) + '%</b><div class="bar"><i style="width:' + (pc * 100) + '%"></i></div></div>';
+    }
+    rows += '</div>';
+  });
+  var who = aud === 'St' ? '학생' : '학부모';
+  document.getElementById('cboard').innerHTML = '<div class="ptop"><div class="ring">' + ringHtml(done / tot) + '</div><div class="pinfo">' +
+    '<div class="pt">' + who + ' 참여 현황 <span>' + document.getElementById('pDday').textContent + '</span></div>' +
+    '<div class="pn">전체 <b>' + tot + '명</b> 중 <b>' + done + '명</b> 참여 · 50% 미만 반 <b style="color:#b45309">' + low.length + '개</b></div>' +
+    '<div class="pbtns"><button class="copybtn" type="button" id="btnLowCopy">50% 미만 반 복사</button><button class="copybtn light" type="button" id="btnCMsg">담임 선생님께 독려 메시지 복사</button></div>' +
+    '</div></div><div class="pmiss"><div class="pl">반별 참여율 (주황 = 50% 미만) · 반별 재적 인원 기준 (재적현황표 11. 26. 확인 · 총 259명)</div>' + rows + '</div>';
+  document.getElementById('btnLowCopy').onclick = function () { copyText(low.join(', '), this); };
+  document.getElementById('btnCMsg').onclick = function () {
+    copyText('[' + who + ' 만족도 조사 참여 안내]\n선생님, 반 ' + who + ' 설문 참여율을 공유드립니다.\n' + (low.length ? '▶ 참여율이 낮은 반: ' + low.join(', ') + '\n' : '') +
+      '▶ 기간: ~' + CFG.endLabel + '\n▶ 참여 링크: (설문 링크)\n' + (aud === 'St' ? '조회·종례 시간에 한 번 안내 부탁드립니다.' : '학급 알림으로 한 번 더 안내 부탁드립니다.') + ' 감사합니다.', this);
+  };
+  return done;
+}
+
+/* ===== 참여 현황 (예시: 명단과 참여자 시트를 비교) ===== */
+var DEMO_ROSTER = []; for (var di = 1; di <= CFG.total; di++) DEMO_ROSTER.push('교사' + (di < 10 ? '0' : '') + di);
+var DEMO_MISS = [3, 9, 15, 22, 28];
+var PARTICIPANTS = DEMO_ROSTER.filter(function (n, i) { return DEMO_MISS.indexOf(i + 1) < 0; }); // 실제: '참여자' 시트의 이름
+function getRoster() {
+  try { var r = localStorage.getItem('survey-roster'); if (r) return r.split(/\r?\n/).map(function (x) { return x.trim(); }).filter(Boolean); } catch (e) {}
+  return DEMO_ROSTER;
+}
+function buildPart() {
+  var roster = getRoster();
+  var miss = roster.filter(function (n) { return PARTICIPANTS.indexOf(n) < 0; });
+  var done = roster.length - miss.length, pct = roster.length ? done / roster.length : 0;
+  var C = 2 * Math.PI * 40;
+  document.getElementById('pRing').innerHTML = '<svg viewBox="0 0 92 92"><circle cx="46" cy="46" r="40" fill="none" stroke="#eef1f5" stroke-width="9"/>' +
+    '<circle cx="46" cy="46" r="40" fill="none" stroke="var(--self)" stroke-width="9" stroke-linecap="round" stroke-dasharray="' + (C * pct) + ' ' + C + '"/></svg>' +
+    '<div class="lbl"><b>' + Math.round(pct * 100) + '%</b><span>참여율</span></div>';
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var dd = Math.round((new Date(CFG.end + 'T00:00:00') - today) / 86400000);
+  document.getElementById('pDday').textContent = dd > 0 ? '마감 D-' + dd : dd === 0 ? '오늘 마감' : '마감 지남 · 응답 계속 받는 중';
+  document.getElementById('pNums').innerHTML = '전체 <b>' + roster.length + '명</b> 중 <b>' + done + '명</b> 참여 · 미참여 <b style="color:#b45309">' + miss.length + '명</b>';
+  document.getElementById('pMiss').innerHTML = miss.length ? miss.map(function (n) { return '<span>' + esc(n) + '</span>'; }).join('') : '<span style="background:var(--grow-soft);color:var(--grow)">모두 참여했어요 🎉</span>';
+  document.getElementById('btnMissCopy').onclick = function () { copyText(miss.join(', '), this); };
+  document.getElementById('btnMsgCopy').onclick = function () {
+    copyText('[학교 교육활동 만족도 조사 안내]\n선생님, 아직 설문에 참여하지 않으셨다면 잠시 시간 내어 참여 부탁드립니다. (약 5분)\n▶ 기간: ~' + CFG.endLabel + '\n▶ 참여 링크: (설문 링크)\n응답 내용은 익명으로 처리됩니다. 감사합니다.', this);
+  };
+}
+function copyText(t, btn) {
+  var done = function () { var o = btn.textContent; btn.textContent = '✓ 복사됨'; btn.classList.add('ok'); setTimeout(function () { btn.textContent = o; btn.classList.remove('ok'); }, 1500); };
+  if (navigator.clipboard) navigator.clipboard.writeText(t).then(done, function () { fallbackCopy(t); done(); });
+  else { fallbackCopy(t); done(); }
+}
+document.getElementById('btnRoster').addEventListener('click', function () {
+  var box = document.getElementById('rosterBox');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+  document.getElementById('rosterTa').value = getRoster().join('\n');
+});
+document.getElementById('btnRosterSave').addEventListener('click', function () {
+  try { localStorage.setItem('survey-roster', document.getElementById('rosterTa').value); } catch (e) {}
+  buildPart(); document.getElementById('rosterBox').style.display = 'none';
+});
+
+/* 표 복사 → 한글·엑셀에 붙여넣기 (탭 구분) */
+function tableToTSV(el) {
+  if (el.tagName !== 'TABLE') {
+    return Array.prototype.map.call(el.children, function (d) {
+      return Array.prototype.map.call(d.children, function (x) { return x.textContent.trim(); }).join('\t');
+    }).join('\n');
+  }
+  return Array.prototype.map.call(el.querySelectorAll('tr'), function (tr) {
+    return Array.prototype.map.call(tr.children, function (td) { return td.innerText.replace(/\s*\n\s*/g, ' ').trim(); }).join('\t');
+  }).join('\n');
+}
+document.querySelectorAll('.copybtn').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var el = document.getElementById(b.getAttribute('data-copy'));
+    var tsv = el.style.display === 'none' ? (function () { el.style.display = 'table'; var t = tableToTSV(el); el.style.display = 'none'; return t; })() : tableToTSV(el);
+    var done = function () { var t = b.textContent; b.textContent = '✓ 복사됨'; b.classList.add('ok'); setTimeout(function () { b.textContent = t; b.classList.remove('ok'); }, 1500); };
+    if (navigator.clipboard) navigator.clipboard.writeText(tsv).then(done, function () { fallbackCopy(tsv); done(); });
+    else { fallbackCopy(tsv); done(); }
+  });
+});
+function fallbackCopy(t) { var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} ta.remove(); }
+
+document.querySelectorAll('.rtabs button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    document.querySelectorAll('.rtabs button').forEach(function (x) { x.classList.toggle('on', x === b); });
+    document.querySelectorAll('.rpanel').forEach(function (p) { p.classList.toggle('on', p.id === b.getAttribute('data-r')); });
+  });
+});
+
+/* ===== 탭 ===== */
+document.querySelectorAll('.viewtabs button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    document.querySelectorAll('.viewtabs button').forEach(function (x) { x.classList.toggle('on', x === b); });
+    document.querySelectorAll('.view').forEach(function (v) { v.classList.toggle('on', v.id === b.getAttribute('data-view')); });
+    window.scrollTo(0, 0); fitAll();
+  });
+});
+
+document.getElementById('audSeg').addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b || b.disabled) return;
+  var r = b.getAttribute('data-aud');
+  document.querySelectorAll('#audSeg button').forEach(function (x) { x.classList.toggle('on', x === b); });
+  if (ROLE !== r) setRole(r);
+  go(-1); fitAll();
+});
+document.getElementById('dashTabs').addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b) return;
+  document.querySelectorAll('#dashTabs button').forEach(function (x) { x.classList.toggle('on', x === b); });
+  buildDash(b.getAttribute('data-aud'));
+});
+document.getElementById('repTabs').addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b) return;
+  document.querySelectorAll('#repTabs button').forEach(function (x) { x.classList.toggle('on', x === b); });
+  buildReport(b.getAttribute('data-aud'));
+});
+setRole('T'); buildReport(); buildChange(); buildPart(); buildDash(); placeSticky(); go(-1); checkDraft();
+
+/* ===== 확인 요청: 바로가기 ===== */
+document.getElementById('v-check').addEventListener('click', function (e) {
+  var b = e.target.closest('button[data-go]'); if (!b) return;
+  var g = b.getAttribute('data-go').split(':');
+  document.querySelector('.viewtabs button[data-view="' + g[0] + '"]').click();
+  if (g[0] === 'v-form') { document.querySelector('#audSeg button[data-aud="' + g[1] + '"]').click(); window.scrollTo(0, 0); }
+  else document.querySelector('#chgTabs button[data-aud="' + g[1] + '"]').click();
+});
+</script>
+</body>
+</html>
