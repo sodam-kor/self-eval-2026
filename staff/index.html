@@ -417,6 +417,9 @@
   .lgsw .tr i { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; transition: left .2s; }
   .lgsw input:checked + .tr { background: #22c55e; }
   .lgsw input:checked + .tr i { left: 16px; }
+  .lgpill { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 4px; border: 1.5px solid var(--ac); background: #fff; color: var(--ac); border-radius: 999px; padding: 4px 10px; font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
+  .lgpill:hover { background: var(--ac); color: #fff; }
+  .lgpill .fl { font-size: 13px; }
   .lgsw input:focus-visible + .tr { outline: 2px solid #fff; outline-offset: 2px; }
   @media (min-width: 561px) { html[lang="ru"] .scale button { font-size: 11px; line-height: 1.25; word-break: break-word; } }
 </style>
@@ -430,6 +433,7 @@
       <div class="no" id="hNo"></div>
       <div class="tt"><div class="t1" id="hT1"></div><div class="t2" id="hT2"></div></div>
       <div class="cnt" id="hCnt"></div>
+      <button type="button" class="lgpill" id="lgPill" aria-label="언어 바꾸기 / Сменить язык"><span class="fl">🌐</span><span id="lgPillTx">Русский</span></button>
     </div>
     <div class="segs" id="hSegs"></div>
   </div></div>
@@ -1019,6 +1023,7 @@ function applyStatic() {
   document.getElementById('who').placeholder = L('이름을 입력해 주세요');
   document.documentElement.lang = LANG;
   document.getElementById('lgChk').checked = LANG === 'ru';
+  document.getElementById('lgPillTx').textContent = LANG === 'ru' ? '한국어' : 'Русский';
 }
 function setLang(l) {
   LANG = l; try { localStorage.setItem('survey2026-lang', l); } catch (e) {}
@@ -1028,6 +1033,8 @@ function setLang(l) {
   var rs = document.getElementById('resume'); if (rs.style.display === 'block') { rs.style.display = 'none'; checkDraft(); checkSent(); }
 }
 document.getElementById('lgChk').addEventListener('change', function (e) { setLang(e.target.checked ? 'ru' : 'ko'); });
+document.getElementById('lgPill').addEventListener('click', function () { setLang(LANG === 'ru' ? 'ko' : 'ru'); });
+if (AUDK === 'T') document.getElementById('lgPill').style.display = 'none';
 
 applyStatic(); renderDue();
 setRole(AUDK); placeSticky(); go(-1); checkDraft(); checkSent();
